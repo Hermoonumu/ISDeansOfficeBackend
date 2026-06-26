@@ -1,6 +1,6 @@
-using Microsoft.EntityFrameworkCore;
-using DeanInfoSystem.Domain;
 using System.Security.Cryptography;
+using DeanInfoSystem.Domain;
+using Microsoft.EntityFrameworkCore;
 public class SystemDbContext : DbContext
 {
     public required DbSet<User> Users { get; set; }
@@ -19,6 +19,11 @@ public class SystemDbContext : DbContext
         {
             u.HasKey(e => e.Id);
             u.HasIndex(e => e.Username).IsUnique();
+
+            u.HasOne(e => e.Program)
+            .WithMany()
+            .HasForeignKey(e => e.ProgramId)
+            .OnDelete(DeleteBehavior.Restrict);
         });
 
 
@@ -56,7 +61,7 @@ public class SystemDbContext : DbContext
 
             c.HasOne(e => e.Subject)
             .WithMany()
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Restrict);
         });
 
 

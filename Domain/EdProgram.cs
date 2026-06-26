@@ -7,10 +7,13 @@ namespace DeanInfoSystem.Domain;
 public class EdProgram
 {
     [Key]
-    public Guid Id {set;get;}
+    public Guid Id { set; get; }
     [Required]
-    [StringLength(255)]
-    public required string ProgramName{set;get;}
-    public Guid? DepartmentId{set;get;}
-    public Department? Department {set;get;}
+    [MaxLength(255)]
+    public required string ProgramName { set; get; }
+    [Required]
+    [MaxLength(4)]
+    public required string ProgramCode { set; get; }
+    public Guid? DepartmentId { set; get; }
+    public Department? Department { set; get; }
 }

@@ -6,8 +6,8 @@ namespace DeanInfoSystem.Domain;
 public class Department
 {
     [Key]
-    public Guid Id{set;get;}
+    public Guid Id { set; get; }
     [Required]
-    [StringLength(255)]
-    public required string DepartmentName{set;get;}
+    [MaxLength(255)]
+    public required string DepartmentName { set; get; }
 }

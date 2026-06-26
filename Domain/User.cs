@@ -6,21 +6,24 @@ namespace DeanInfoSystem.Domain;
 public class User
 {
     [Key]
-    public Guid Id {set;get;}
+    public Guid Id { set; get; }
     [Required]
-    [StringLength(255)]
-    public required string FirstName{set;get;}
+    [MaxLength(255)]
+    public required string FirstName { set; get; }
     [Required]
-    [StringLength(255)]
-    public required string LastName{set;get;}
+    [MaxLength(255)]
+    public required string LastName { set; get; }
     [Required]
-    [StringLength(255)]
-    public required string Username{set;get;}
+    [MaxLength(255)]
+    public required string Username { set; get; }
     [Required]
-    public required string PasswordHash{set;get;}
-    public DateTime BirthDate{set;get;}
+    public required string PasswordHash { set; get; }
+    public DateTime BirthDate { set; get; }
     [Required]
-    public Position Position {set;get;}
+    public Position Position { set; get; }
+
+    public Guid? ProgramId { set; get; }
+    public EdProgram? Program { set; get; }
 
 
 }
@@ -28,7 +31,7 @@ public class User
 
 public enum Position
 {
-    Dean, 
+    Dean,
     ViceDean,
     Secretary,
     Assistant,

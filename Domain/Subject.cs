@@ -6,7 +6,6 @@ namespace DeanInfoSystem.Domain;
 
 public class Subject
 {
-    [Required]
     [Key]
     public Guid Id{set;get;}
     [Required]

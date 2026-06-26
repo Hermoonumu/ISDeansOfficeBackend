@@ -5,7 +5,6 @@ namespace DeanInfoSystem.Domain;
 
 public class Department
 {
-    [Required]
     [Key]
     public Guid Id{set;get;}
     [Required]

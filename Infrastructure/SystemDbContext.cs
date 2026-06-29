@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using DeanInfoSystem.Domain;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 public class SystemDbContext : DbContext
 {
     public required DbSet<User> Users { get; set; }
@@ -24,6 +25,8 @@ public class SystemDbContext : DbContext
             .WithMany()
             .HasForeignKey(e => e.ProgramId)
             .OnDelete(DeleteBehavior.Restrict);
+
+            u.Property<uint>("ver").IsRowVersion();
         });
 
 
@@ -34,6 +37,8 @@ public class SystemDbContext : DbContext
             p.HasOne(e => e.Department)
             .WithMany()
             .OnDelete(DeleteBehavior.SetNull);
+
+            p.Property<uint>("ver").IsRowVersion();
         });
 
 
@@ -41,6 +46,8 @@ public class SystemDbContext : DbContext
         {
             s.HasKey(e => e.Id);
             s.HasIndex(e => e.SubjectName).IsUnique();
+
+            s.Property<uint>("ver").IsRowVersion();
         });
 
 
@@ -48,6 +55,8 @@ public class SystemDbContext : DbContext
         {
             d.HasKey(e => e.Id);
             d.HasIndex(e => e.DepartmentName).IsUnique();
+
+            d.Property<uint>("ver").IsRowVersion();
         });
 
 
@@ -62,6 +71,8 @@ public class SystemDbContext : DbContext
             c.HasOne(e => e.Subject)
             .WithMany()
             .OnDelete(DeleteBehavior.Restrict);
+
+            c.Property<uint>("ver").IsRowVersion();
         });
 
 
@@ -76,8 +87,12 @@ public class SystemDbContext : DbContext
             sg.HasOne(e => e.Student)
             .WithMany()
             .OnDelete(DeleteBehavior.Cascade);
+
+            sg.Property<uint>("ver").IsRowVersion();
         });
+
     }
+
 
 
 }

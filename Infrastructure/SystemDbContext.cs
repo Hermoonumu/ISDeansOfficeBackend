@@ -1,7 +1,5 @@
-using System.Security.Cryptography;
 using DeanInfoSystem.Domain;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 public class SystemDbContext : DbContext
 {
     public required DbSet<User> Users { get; set; }

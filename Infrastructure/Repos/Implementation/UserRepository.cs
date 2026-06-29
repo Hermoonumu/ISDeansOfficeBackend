@@ -8,7 +8,7 @@ public class UserRepository(SystemDbContext _db) : IUserRepository
 {
     public async Task AddUserAsync(User user)
     {
-        throw new NotImplementedException();
+
     }
 
     public async Task<User> GetUserByGuidAsync(string guid)

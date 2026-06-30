@@ -1,5 +1,6 @@
 using DeanInfoSystem.Application.Users;
 using DeanInfoSystem.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace DeanInfoSystem.Infrastructure.Repos;
 
@@ -8,31 +9,33 @@ public class UserRepository(SystemDbContext _db) : IUserRepository
 {
     public async Task AddUserAsync(User user)
     {
-
+        await _db.Users.AddAsync(user);
     }
 
-    public async Task<User> GetUserByGuidAsync(string guid)
+    public async Task<User?> GetUserByGuidAsync(string guid)
     {
-        throw new NotImplementedException();
+        return await _db.Users.Where(u => u.Id.ToString() == guid).FirstOrDefaultAsync();
     }
 
-    public async Task<User> GetUserByUsernameAsync(string username)
+    public async Task<User?> GetUserByUsernameAsync(string username)
     {
-        throw new NotImplementedException();
+        return await _db.Users.Where(u => u.Username == username).FirstOrDefaultAsync();
     }
 
     public async Task<List<User>> GetUsersByPositionAsync(Position position)
     {
-        throw new NotImplementedException();
+        return await _db.Users.Where(u => u.Position == position).ToListAsync();
     }
 
     public async Task RemoveUserAsync(User user)
     {
-        throw new NotImplementedException();
+        await _db.Users.Where(u => u.Id == user.Id).ExecuteDeleteAsync();
     }
 
-    public async Task UpdateTrackedUserAsync()
+    public async Task<bool> IsUsernameTaken(string username)
     {
-        throw new NotImplementedException();
+        User? user = await _db.Users.Where(u => u.Username == username).FirstOrDefaultAsync();
+        if (user is null) return false;
+        return true;
     }
 }

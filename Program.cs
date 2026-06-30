@@ -1,4 +1,5 @@
 using System.Text;
+using DeanInfoSystem.Application.Common.Auth;
 using DeanInfoSystem.Application.Common.Caching;
 using DeanInfoSystem.Application.Users;
 using DeanInfoSystem.Infrastructure.Caching;
@@ -36,7 +37,7 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(multiplexer);
 builder.Services.AddScoped<ICacheService, RedisCache>();
 
 //Services
-
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 
 
@@ -111,6 +112,16 @@ app.MapScalarApiReference();
 //App init
 using (var scope = app.Services.CreateScope())
 {
+    var AuthService = scope.ServiceProvider.GetRequiredService<IAuthService>();
+    var AdminCreds = await AuthService.GetAdministratorAsync();
+    if (AdminCreds is null)
+    {
+        Console.WriteLine("\n\n\nAdmin has been instantiated. Take a peek at the db.\n\n\n");
+    }
+    else
+    {
+        Console.WriteLine($"\n\n\nCredentials:\nUsername: {AdminCreds[0]}\nPassword: {AdminCreds[1]}\nDon't forget those.\n\n\n");
+    }
 
 }
 

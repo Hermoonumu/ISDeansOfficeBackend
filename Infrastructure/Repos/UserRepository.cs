@@ -10,6 +10,7 @@ public class UserRepository(SystemDbContext _db) : IUserRepository
     public async Task AddUserAsync(User user)
     {
         await _db.Users.AddAsync(user);
+        await _db.SaveChangesAsync();
     }
 
     public async Task<User?> GetUserByGuidAsync(string guid)

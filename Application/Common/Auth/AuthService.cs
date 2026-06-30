@@ -16,16 +16,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql;
 
-public class AuthService(IUserService _userSvc,
-                            IUserRepository _userRepo,
+public class AuthService(IUserRepository _userRepo,
                             IConfiguration _conf,
                             ICacheService _redis) : IAuthService
 {
-    public async Task<Dictionary<string, string>> RegisterAsync(NewUserDTO nuDTO, bool admin = false)
+    public async Task<Dictionary<string, string>> RegisterAsync(NewUserDTO nuDTO, Position position = Position.Student)
     {
         User user = UserMapper.DTOToUser(nuDTO);
-        PasswordHasher<User> passwordHasher = new PasswordHasher<User>();
+        PasswordHasher<User> passwordHasher = new();
         user.PasswordHash = passwordHasher.HashPassword(user, nuDTO.Password == String.Empty ? nuDTO.Username : nuDTO.Password);
+        user.Position = position;
         try
         {
             await _userRepo.AddUserAsync(user);
@@ -43,7 +43,7 @@ public class AuthService(IUserService _userSvc,
 
     }
 
-    public ClaimsIdentity CreateClaims(User user)
+    ClaimsIdentity CreateClaims(User user)
     {
         ClaimsIdentity claims = new();
         claims.AddClaim(new Claim(ClaimTypes.Name, user.Username!));
@@ -53,16 +53,16 @@ public class AuthService(IUserService _userSvc,
         return claims;
     }
 
-    public async Task<Dictionary<string, string>> GenerateTokensAsync(User user, bool expired = false)
+    async Task<Dictionary<string, string>> GenerateTokensAsync(User user, bool expired = false)
     {
-        Dictionary<string, string> tokens = new Dictionary<string, string>();
-        JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
-        byte[] key = Encoding.ASCII.GetBytes(_conf["SecSettings:SecretKey"]!);
-        SigningCredentials credentials = new SigningCredentials
+        Dictionary<string, string> tokens = [];
+        JwtSecurityTokenHandler handler = new();
+        byte[] key = Encoding.ASCII.GetBytes(_conf["Security:SecretKey"]!);
+        SigningCredentials credentials = new
             (
                 new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature
             );
-        SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
+        SecurityTokenDescriptor tokenDescriptor = new()
         {
             Subject = CreateClaims(user),
             Issuer = _conf["API:Issuer"],
@@ -86,8 +86,8 @@ public class AuthService(IUserService _userSvc,
 
     public async Task<Dictionary<string, string>> LoginAsync(LoginFormDTO lfDTO)
     {
-        User? user = await _userRepo.GetUserByUsernameAsync(lfDTO.Username!);
-        if (user == null) throw new UserDoesntExistException("There's no such user");
+        User? user = await _userRepo.GetUserByUsernameAsync(lfDTO.Username!)
+            ?? throw new UserDoesntExistException("There's no such user");
         if (new PasswordHasher<User>().VerifyHashedPassword(user, user.PasswordHash, lfDTO.Password!)
         == PasswordVerificationResult.Failed) throw new PasswordCheckFailedException("Password check failed.");
         return await GenerateTokensAsync(user);
@@ -103,7 +103,7 @@ public class AuthService(IUserService _userSvc,
         string? Guid = await _redis.GetAsync(token)
             ?? throw new RefreshFailedException("Given refresh token is not valid");
         User? user = await _userRepo.GetUserByGuidAsync(Guid);
-        return await GenerateTokensAsync(user, true);
+        return await GenerateTokensAsync(user!, true);
     }
 
     public async Task<User?> AuthenticateUserAsync(string token)
@@ -117,7 +117,6 @@ public class AuthService(IUserService _userSvc,
 
     public async Task ClearTokensAsync(string accessToken, string refreshToken)
     {
-        User? user = await AuthenticateUserAsync(accessToken);
         await _redis.RemoveAsync(refreshToken);
         var KeyName = $"Revoked_{accessToken}";
         await _redis.SetAsync(KeyName,
@@ -137,7 +136,7 @@ public class AuthService(IUserService _userSvc,
             LastName = "",
             Username = "administrator",
             Password = Password
-        }, true);
+        }, Position.Dean);
         return ["administrator", Password];
     }
 }

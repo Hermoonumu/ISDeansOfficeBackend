@@ -1,8 +1,8 @@
 using System.Text;
-using DeanInfoSystem.Application.Extensions;
-using DeanInfoSystem.Application.Extensions.Implementation;
+using DeanInfoSystem.Application.Common.Caching;
+using DeanInfoSystem.Application.Users;
+using DeanInfoSystem.Infrastructure.Caching;
 using DeanInfoSystem.Infrastructure.Repos;
-using DeanInfoSystem.Infrastructure.Repos.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -33,9 +33,10 @@ builder.Services.AddDbContext<SystemDbContext>(options =>
 
 var multiplexer = ConnectionMultiplexer.Connect(builder.Configuration["ConnectionStrings:RedisConnection"]!);
 builder.Services.AddSingleton<IConnectionMultiplexer>(multiplexer);
-builder.Services.AddScoped<IRedisCacheExt, RedisCacheExt>();
+builder.Services.AddScoped<ICacheService, RedisCache>();
 
 //Services
+
 
 
 
@@ -78,7 +79,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     var _redis = context
                                     .HttpContext
                                     .RequestServices
-                                    .GetRequiredService<IRedisCacheExt>()
+                                    .GetRequiredService<ICacheService>()
                                     .GetRedis();
                     var isRevoked = await _redis.StringGetAsync($"Revoked_{TokenToCheck}");
                     if (!string.IsNullOrEmpty(isRevoked))

@@ -1,13 +1,14 @@
+using DeanInfoSystem.Application.Common.Caching;
 using StackExchange.Redis;
 
-namespace DeanInfoSystem.Application.Extensions.Implementation;
+namespace DeanInfoSystem.Infrastructure.Caching;
 
-public class RedisCacheExt : IRedisCacheExt
+public class RedisCache : ICacheService
 {
     private IConnectionMultiplexer _muxer;
     public IDatabase _redis;
     private IServer _srv;
-    public RedisCacheExt(IConnectionMultiplexer muxer)
+    public RedisCache(IConnectionMultiplexer muxer)
     {
         _muxer = muxer;
         _redis = _muxer.GetDatabase();

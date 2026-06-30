@@ -1,5 +1,5 @@
+using DeanInfoSystem.Application.Users;
 using DeanInfoSystem.Domain;
-using DeanInfoSystem.Infrastructure.Repos.Interface;
 
 namespace DeanInfoSystem.Infrastructure.Repos;
 

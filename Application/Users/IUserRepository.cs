@@ -1,6 +1,6 @@
 using DeanInfoSystem.Domain;
 
-namespace DeanInfoSystem.Infrastructure.Repos.Interface;
+namespace DeanInfoSystem.Application.Users;
 
 
 public interface IUserRepository

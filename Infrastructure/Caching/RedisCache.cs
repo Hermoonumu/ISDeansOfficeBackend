@@ -32,7 +32,6 @@ public class RedisCache : ICacheService
     public async Task RemoveAsync(string key)
     {
         if (key is null) return;
-        Console.WriteLine($"THE KEY: {key}");
         await _redis.KeyDeleteAsync(key);
     }
 

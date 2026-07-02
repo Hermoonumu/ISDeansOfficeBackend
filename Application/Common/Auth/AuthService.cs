@@ -81,7 +81,6 @@ public class AuthService(IUserRepository _userRepo,
 
         await _redis.SetAsync(tokens["RefreshToken"],
         user.Id.ToString(), TimeSpan.FromDays(Int32.Parse(_conf["Security:RefreshTokenExpirySpanDays"]!)));
-        Console.WriteLine($"ACCESS TOKEN: {tokens["AccessToken"]}\nREFRESH: {tokens["RefreshToken"]}");
         return tokens;
     }
 
@@ -98,11 +97,9 @@ public class AuthService(IUserRepository _userRepo,
 
     public async Task<Dictionary<string, string>> AttemptRefreshAsync(string refreshToken)
     {
-        var hasher = SHA512.Create();
-        var token = Convert.ToBase64String(hasher.ComputeHash(
-                    Encoding.ASCII.GetBytes(refreshToken)));
-        string? Guid = await _redis.GetAsync(token)
+        string? Guid = await _redis.GetAsync(refreshToken)
             ?? throw new RefreshFailedException("Given refresh token is not valid");
+        await _redis.RemoveAsync(refreshToken);
         User? user = await _userRepo.GetUserByGuidAsync(Guid);
         return await GenerateTokensAsync(user!, true);
     }

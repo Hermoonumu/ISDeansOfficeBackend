@@ -1,4 +1,5 @@
 using System.Text;
+using DeanInfoSystem.API;
 using DeanInfoSystem.Application.Common.Auth;
 using DeanInfoSystem.Application.Common.Caching;
 using DeanInfoSystem.Application.Users;
@@ -25,6 +26,9 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddOpenApi();
+
 //DB connect (postgres db)
 builder.Services.AddDbContext<SystemDbContext>(options =>
     options.UseNpgsql(builder.Configuration["ConnectionStrings:PostgreSQL"]));
@@ -45,6 +49,9 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 
+//Controllers
+builder.Services.AddControllers();
+
 //Auth
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(
@@ -56,7 +63,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             conf.TokenValidationParameters = new TokenValidationParameters()
             {
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(
-                                    builder.Configuration["Secrets:SecretKey"]!)),
+                                    builder.Configuration["Security:SecretKey"]!)),
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
                 ValidateIssuer = true,
@@ -104,11 +111,15 @@ builder.Services.AddAuthorizationBuilder()
 
 var app = builder.Build();
 
-
+app.UseHttpsRedirection();
+app.UseRouting();
 //API Docs
+app.MapOpenApi();
 app.MapScalarApiReference();
 
 
+app.UseAuthentication();
+app.UseAuthorization();
 //App init
 using (var scope = app.Services.CreateScope())
 {
@@ -124,5 +135,7 @@ using (var scope = app.Services.CreateScope())
     }
 
 }
+
+app.MapControllers();
 
 app.Run();

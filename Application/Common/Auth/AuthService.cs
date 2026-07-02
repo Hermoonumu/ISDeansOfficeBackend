@@ -79,8 +79,9 @@ public class AuthService(IUserRepository _userRepo,
         tokens.Add("RefreshToken", plainRefreshToken);
         var hasher = SHA512.Create();
 
-        await _redis.SetAsync(Convert.ToBase64String(hasher.ComputeHash(Encoding.ASCII.GetBytes(plainRefreshToken))!),
+        await _redis.SetAsync(tokens["RefreshToken"],
         user.Id.ToString(), TimeSpan.FromDays(Int32.Parse(_conf["Security:RefreshTokenExpirySpanDays"]!)));
+        Console.WriteLine($"ACCESS TOKEN: {tokens["AccessToken"]}\nREFRESH: {tokens["RefreshToken"]}");
         return tokens;
     }
 
@@ -118,8 +119,7 @@ public class AuthService(IUserRepository _userRepo,
     public async Task ClearTokensAsync(string accessToken, string refreshToken)
     {
         await _redis.RemoveAsync(refreshToken);
-        var KeyName = $"Revoked_{accessToken}";
-        await _redis.SetAsync(KeyName,
+        await _redis.SetAsync($"Revoked_{accessToken}",
                                     accessToken,
                                     TimeSpan.FromMinutes(Int32.Parse(_conf["Security:AccessTokenExpirySpanMinutes"]!)));
     }

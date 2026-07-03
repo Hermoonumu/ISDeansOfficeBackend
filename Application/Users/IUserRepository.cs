@@ -11,4 +11,5 @@ public interface IUserRepository
     public Task<List<User>> GetUsersByPositionAsync(Position position);
     public Task RemoveUserAsync(User user);
     public Task<bool> IsUsernameTaken(string username);
+    public Task PersistChanges();
 }

@@ -15,7 +15,8 @@ public static class UserMapper
             LastName = nuDTO.LastName,
             Username = nuDTO.Username,
             BirthDate = nuDTO.BirthDate,
-            PasswordHash = ""
+            PasswordHash = "",
+            Position = nuDTO.Position
         };
     }
 }

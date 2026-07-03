@@ -42,6 +42,7 @@ builder.Services.AddScoped<ICacheService, RedisCache>();
 
 //Services
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 
 
@@ -107,7 +108,16 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy("ViceDean", policy => policy.RequireRole("ViceDean"))
     .AddPolicy("Assisstant", policy => policy.RequireRole("Assisstant"))
     .AddPolicy("EducationalAdvisor", policy => policy.RequireRole("EducationalAdvisor"))
-    .AddPolicy("Student", policy => policy.RequireRole("Student"));
+    .AddPolicy("Student", policy => policy.RequireRole("Student"))
+    .AddPolicy("DeanViceDeanSecretary", policy =>
+    {
+        policy.RequireAssertion(ctx =>
+        {
+            return ctx.User.IsInRole("Dean") |
+                    ctx.User.IsInRole("ViceDean") |
+                    ctx.User.IsInRole("Secretary");
+        });
+    });
 
 var app = builder.Build();
 

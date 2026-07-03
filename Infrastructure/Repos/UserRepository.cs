@@ -39,4 +39,9 @@ public class UserRepository(SystemDbContext _db) : IUserRepository
         if (user is null) return false;
         return true;
     }
+
+    public async Task PersistChanges()
+    {
+        await _db.SaveChangesAsync();
+    }
 }

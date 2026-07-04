@@ -1,5 +1,6 @@
 namespace DeanInfoSystem.API;
 
+using DeanInfoSystem.Application.Common.Auth;
 using DeanInfoSystem.Application.Common.Exceptions;
 using DeanInfoSystem.Application.DTO;
 using DeanInfoSystem.Application.Users;
@@ -12,7 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 [Route("/api/users")]
 
 
-public class UserController(IUserService _userSvc) : ControllerBase
+public class UserController(IUserService _userSvc, IAuthService _authSvc) : ControllerBase
 {
     [Authorize(Policy = "DeanViceDeanSecretary")]
     [HttpPost]
@@ -20,7 +21,7 @@ public class UserController(IUserService _userSvc) : ControllerBase
     {
         try
         {
-            await _userSvc.AddUserAsync(nuDTO);
+            await _authSvc.RegisterAsync(nuDTO);
         }
         catch
         {

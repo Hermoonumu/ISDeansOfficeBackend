@@ -8,7 +8,7 @@ public class NewUserValidator : AbstractValidator<NewUserDTO>
     public NewUserValidator()
     {
         RuleFor(x => x.BirthDate)
-        .GreaterThan(DateTime.UtcNow - TimeSpan.FromDays(5110)).WithMessage("The person must be older than 14");
+        .LessThan(DateTime.UtcNow - TimeSpan.FromDays(5110)).WithMessage("The person must be older than 14");
 
         RuleFor(x => x.FirstName)
         .MinimumLength(1).WithMessage("Name must be at least 1 character long")

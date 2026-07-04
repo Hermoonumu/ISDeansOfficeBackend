@@ -20,12 +20,12 @@ public class AuthService(IUserRepository _userRepo,
                             IConfiguration _conf,
                             ICacheService _redis) : IAuthService
 {
-    public async Task<Dictionary<string, string>> RegisterAsync(NewUserDTO nuDTO, Position position = Position.Student)
+    public async Task<Dictionary<string, string>> RegisterAsync(NewUserDTO nuDTO, Position? position = null)
     {
         User user = UserMapper.DTOToUser(nuDTO);
         PasswordHasher<User> passwordHasher = new();
         user.PasswordHash = passwordHasher.HashPassword(user, nuDTO.Password == String.Empty ? nuDTO.Username : nuDTO.Password);
-        user.Position = position;
+        if (position is not null) user.Position = (Position)position;
         try
         {
             await _userRepo.AddUserAsync(user);

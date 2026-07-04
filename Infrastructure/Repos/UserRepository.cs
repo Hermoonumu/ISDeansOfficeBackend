@@ -40,7 +40,7 @@ public class UserRepository(SystemDbContext _db) : IUserRepository
         return true;
     }
 
-    public async Task PersistChanges()
+    public async Task PersistChangesAsync()
     {
         await _db.SaveChangesAsync();
     }

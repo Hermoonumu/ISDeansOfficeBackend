@@ -1,10 +1,11 @@
 using System.Text;
-using DeanInfoSystem.API;
 using DeanInfoSystem.Application.Common.Auth;
 using DeanInfoSystem.Application.Common.Caching;
 using DeanInfoSystem.Application.Users;
 using DeanInfoSystem.Infrastructure.Caching;
 using DeanInfoSystem.Infrastructure.Repos;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -43,15 +44,21 @@ builder.Services.AddScoped<ICacheService, RedisCache>();
 //Services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
-
+builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 
 
 //Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 
 
 //Controllers
 builder.Services.AddControllers();
+
+
+//Validation
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 //Auth
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

@@ -20,18 +20,15 @@ public class UserService(IUserRepository _userRepo) : IUserService
         await _userRepo.AddUserAsync(user);
     }
 
-    public async Task<User?> GetUserByIdAsync(string guid)
+    public async Task PatchUserAsync(string guid, JsonPatchDocument<User> Patch)
     {
-        return await _userRepo.GetUserByGuidAsync(guid);
-    }
-
-    public async Task PatchUserAsync(User user, JsonPatchDocument<User> Patch)
-    {
+        User? user = await _userRepo.GetUserByGuidAsync(guid) ??
+        throw new UserDoesntExistException("No such user");
         Patch.ApplyTo(user, (err) =>
         {
             throw new UpdateFailedException($"User update failed.\nAmended object: {err.AffectedObject.GetType()}\nError msg: {err.ErrorMessage}");
         });
-        await _userRepo.PersistChanges();
+        await _userRepo.PersistChangesAsync();
     }
 
     public async Task RemoveUserAsync(string guid)

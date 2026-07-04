@@ -9,7 +9,6 @@ public interface IUserService
 {
     public Task AddUserAsync(User user);
     public Task AddUserAsync(NewUserDTO nuDTO);
-    public Task<User?> GetUserByIdAsync(string guid);
-    public Task PatchUserAsync(User user, JsonPatchDocument<User> Patch);
+    public Task PatchUserAsync(string guid, JsonPatchDocument<User> Patch);
     public Task RemoveUserAsync(string guid);
 }

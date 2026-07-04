@@ -33,11 +33,9 @@ public class UserController(IUserService _userSvc) : ControllerBase
     [HttpPatch("{UserId}")]
     public async Task<IActionResult> PatchUser([FromRoute] string UserId, [FromBody] JsonPatchDocument<User> UserPatch)
     {
-        User? user = await _userSvc.GetUserByIdAsync(UserId);
-        if (user is null) return BadRequest("We couldn't find the user");
         try
         {
-            await _userSvc.PatchUserAsync(user, UserPatch);
+            await _userSvc.PatchUserAsync(UserId, UserPatch);
         }
         catch (UpdateFailedException e)
         {

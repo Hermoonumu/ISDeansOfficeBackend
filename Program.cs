@@ -113,15 +113,15 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy("Dean", policy => policy.RequireRole("Dean"))
     .AddPolicy("Secretary", policy => policy.RequireRole("Secretary"))
     .AddPolicy("ViceDean", policy => policy.RequireRole("ViceDean"))
-    .AddPolicy("Assisstant", policy => policy.RequireRole("Assisstant"))
+    .AddPolicy("Assistant", policy => policy.RequireRole("Assisstant"))
     .AddPolicy("EducationalAdvisor", policy => policy.RequireRole("EducationalAdvisor"))
     .AddPolicy("Student", policy => policy.RequireRole("Student"))
     .AddPolicy("DeanViceDeanSecretary", policy =>
     {
         policy.RequireAssertion(ctx =>
         {
-            return ctx.User.IsInRole("Dean") |
-                    ctx.User.IsInRole("ViceDean") |
+            return ctx.User.IsInRole("Dean") ||
+                    ctx.User.IsInRole("ViceDean") ||
                     ctx.User.IsInRole("Secretary");
         });
     });

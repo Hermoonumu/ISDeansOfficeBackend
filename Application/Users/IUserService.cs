@@ -11,4 +11,7 @@ public interface IUserService
     public Task AddUserAsync(NewUserDTO nuDTO);
     public Task PatchUserAsync(string guid, JsonPatchDocument<UserUpdateDTO> Patch);
     public Task RemoveUserAsync(string guid);
+    public Task AssignProfToSubjectAsync(string SubjId, string UserId);
+    public Task DismissUserFromSubjectAsync(string UserId, string SubjectId);
+    public Task<List<Subject>> GetSubjectsAssignedAsync(string UserId);
 }

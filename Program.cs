@@ -1,14 +1,12 @@
 using System.Text;
-using DeanInfoSystem.API.StudentGrades;
 using DeanInfoSystem.Application.Common.Auth;
 using DeanInfoSystem.Application.Common.Caching;
-using DeanInfoSystem.Application.Common.Exceptions;
 using DeanInfoSystem.Application.Curricula;
 using DeanInfoSystem.Application.Enrollment;
 using DeanInfoSystem.Application.Programs;
+using DeanInfoSystem.Application.StudentGrades;
 using DeanInfoSystem.Application.Subjects;
 using DeanInfoSystem.Application.Users;
-using DeanInfoSystem.Domain;
 using DeanInfoSystem.Infrastructure.Caching;
 using DeanInfoSystem.Infrastructure.Repos;
 using FluentValidation;
@@ -55,6 +53,7 @@ builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<ISubjectService, SubjectService>();
 builder.Services.AddScoped<IProgramService, ProgramService>();
 builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
+builder.Services.AddScoped<IStudentGradeService, StudentGradeService>();
 
 
 
@@ -65,6 +64,7 @@ builder.Services.AddScoped<IProgramRepository, ProgramRepository>();
 builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
 builder.Services.AddScoped<ICurriculaRepository, CurriculaRepository>();
 builder.Services.AddScoped<IStudentGradeRepository, StudentGradeRepository>();
+builder.Services.AddScoped<IProfessorSubjectRepository, ProfessorSubjectRepository>();
 
 
 //Controllers

@@ -1,8 +1,6 @@
-using DeanInfoSystem.API.StudentGrades;
 using DeanInfoSystem.Application.Common.Exceptions;
 using DeanInfoSystem.Application.Curricula;
 using DeanInfoSystem.Application.DTO;
-using DeanInfoSystem.Application.Users;
 using DeanInfoSystem.Domain;
 
 namespace DeanInfoSystem.Application.Programs;

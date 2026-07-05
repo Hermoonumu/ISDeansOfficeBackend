@@ -8,6 +8,7 @@ public class SystemDbContext : DbContext
     public required DbSet<Department> Departments { get; set; }
     public required DbSet<Curriculum> Curricula { get; set; }
     public required DbSet<StudentGrade> Grades { get; set; }
+    public required DbSet<ProfessorSubject> UserSubj { set; get; }
 
 
     public SystemDbContext(DbContextOptions options) : base(options) { }
@@ -87,6 +88,24 @@ public class SystemDbContext : DbContext
             .OnDelete(DeleteBehavior.Cascade);
 
             sg.Property<uint>("ver").IsRowVersion();
+        });
+
+
+        mBuild.Entity<ProfessorSubject>(ps =>
+        {
+            ps.HasKey(e => e.Id);
+
+            ps.HasIndex(e => new { e.SubjectId, e.UserId });
+
+            ps.HasOne(e => e.User)
+            .WithMany()
+            .HasForeignKey(e => e.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            ps.HasOne(e => e.Subject)
+              .WithMany()
+              .HasForeignKey(e => e.SubjectId)
+              .OnDelete(DeleteBehavior.Cascade);
         });
 
     }

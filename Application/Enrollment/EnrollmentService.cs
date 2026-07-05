@@ -1,11 +1,10 @@
 namespace DeanInfoSystem.Application.Enrollment;
 
 
-using DeanInfoSystem.API.StudentGrades;
 using DeanInfoSystem.Application.Common.Exceptions;
 using DeanInfoSystem.Application.Curricula;
-using DeanInfoSystem.Application.Enrollment;
 using DeanInfoSystem.Application.Programs;
+using DeanInfoSystem.Application.StudentGrades;
 using DeanInfoSystem.Application.Users;
 using DeanInfoSystem.Domain;
 

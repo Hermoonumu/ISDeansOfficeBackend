@@ -14,6 +14,15 @@ public class EdProgram
     [Required]
     [MaxLength(4)]
     public required string ProgramCode { set; get; }
+    public ProgramStatus ProgramStatus { set; get; } = ProgramStatus.Drafted;
     public Guid? DepartmentId { set; get; }
     public Department? Department { set; get; }
+}
+
+public enum ProgramStatus
+{
+    Drafted,
+    Rejected,
+    Approved,
+    Retired
 }

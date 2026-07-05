@@ -1,7 +1,14 @@
 using System.Text;
+using DeanInfoSystem.API.StudentGrades;
 using DeanInfoSystem.Application.Common.Auth;
 using DeanInfoSystem.Application.Common.Caching;
+using DeanInfoSystem.Application.Common.Exceptions;
+using DeanInfoSystem.Application.Curricula;
+using DeanInfoSystem.Application.Enrollment;
+using DeanInfoSystem.Application.Programs;
+using DeanInfoSystem.Application.Subjects;
 using DeanInfoSystem.Application.Users;
+using DeanInfoSystem.Domain;
 using DeanInfoSystem.Infrastructure.Caching;
 using DeanInfoSystem.Infrastructure.Repos;
 using FluentValidation;
@@ -45,11 +52,19 @@ builder.Services.AddScoped<ICacheService, RedisCache>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+builder.Services.AddScoped<ISubjectService, SubjectService>();
+builder.Services.AddScoped<IProgramService, ProgramService>();
+builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
+
 
 
 //Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+builder.Services.AddScoped<IProgramRepository, ProgramRepository>();
+builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
+builder.Services.AddScoped<ICurriculaRepository, CurriculaRepository>();
+builder.Services.AddScoped<IStudentGradeRepository, StudentGradeRepository>();
 
 
 //Controllers
@@ -113,7 +128,7 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy("Dean", policy => policy.RequireRole("Dean"))
     .AddPolicy("Secretary", policy => policy.RequireRole("Secretary"))
     .AddPolicy("ViceDean", policy => policy.RequireRole("ViceDean"))
-    .AddPolicy("Assistant", policy => policy.RequireRole("Assisstant"))
+    .AddPolicy("Assistant", policy => policy.RequireRole("Assistant"))
     .AddPolicy("EducationalAdvisor", policy => policy.RequireRole("EducationalAdvisor"))
     .AddPolicy("Student", policy => policy.RequireRole("Student"))
     .AddPolicy("DeanViceDeanSecretary", policy =>
@@ -123,6 +138,14 @@ builder.Services.AddAuthorizationBuilder()
             return ctx.User.IsInRole("Dean") ||
                     ctx.User.IsInRole("ViceDean") ||
                     ctx.User.IsInRole("Secretary");
+        });
+    })
+    .AddPolicy("DeanViceDean", policy =>
+    {
+        policy.RequireAssertion(ctx =>
+        {
+            return ctx.User.IsInRole("Dean") ||
+                    ctx.User.IsInRole("ViceDean");
         });
     });
 

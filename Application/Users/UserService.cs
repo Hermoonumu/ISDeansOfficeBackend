@@ -20,20 +20,32 @@ public class UserService(IUserRepository _userRepo) : IUserService
         await _userRepo.AddUserAsync(user);
     }
 
-    public async Task PatchUserAsync(string guid, JsonPatchDocument<User> Patch)
+    public async Task PatchUserAsync(string guid, JsonPatchDocument<UserUpdateDTO> Patch)
     {
-        User? user = await _userRepo.GetUserByGuidAsync(guid) ??
+        User? user = await _userRepo.GetUserByGuidAsync(Guid.Parse(guid)) ??
         throw new UserDoesntExistException("No such user");
-        Patch.ApplyTo(user, (err) =>
+        UserUpdateDTO bfPatch = new()
+        {
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Username = user.Username,
+            Position = user.Position,
+            BirthDate = user.BirthDate,
+            ProgramId = user.ProgramId
+        };
+        Patch.ApplyTo(bfPatch, (err) =>
         {
             throw new UpdateFailedException($"User update failed.\nAmended object: {err.AffectedObject.GetType()}\nError msg: {err.ErrorMessage}");
         });
+        user.FirstName = bfPatch.FirstName; user.LastName = bfPatch.LastName;
+        user.Username = bfPatch.Username; user.Position = bfPatch.Position;
+        user.BirthDate = bfPatch.BirthDate; user.ProgramId = bfPatch.ProgramId;
         await _userRepo.PersistChangesAsync();
     }
 
     public async Task RemoveUserAsync(string guid)
     {
-        User user = await _userRepo.GetUserByGuidAsync(guid) ??
+        User user = await _userRepo.GetUserByGuidAsync(Guid.Parse(guid)) ??
                         throw new UserDoesntExistException("No such user");
         await _userRepo.RemoveUserAsync(user);
     }

@@ -6,7 +6,7 @@ namespace DeanInfoSystem.Application.Users;
 public interface IUserRepository
 {
     public Task AddUserAsync(User user);
-    public Task<User?> GetUserByGuidAsync(string guid);
+    public Task<User?> GetUserByGuidAsync(Guid guid);
     public Task<User?> GetUserByUsernameAsync(string username);
     public Task<List<User>> GetUsersByPositionAsync(Position position);
     public Task RemoveUserAsync(User user);

@@ -9,9 +9,9 @@ public class DepartmentRepository(SystemDbContext _db) : IDepartmentRepository
         await _db.SaveChangesAsync();
     }
 
-    public async Task<Department?> GetDepartmentByGuidAsync(string guid)
+    public async Task<Department?> GetDepartmentByGuidAsync(Guid guid)
     {
-        return await _db.Departments.Where(d => d.Id.ToString() == guid).FirstOrDefaultAsync();
+        return await _db.Departments.Where(d => d.Id == guid).FirstOrDefaultAsync();
     }
 
     public async Task<List<Department>> GetDepartmentsAsync()

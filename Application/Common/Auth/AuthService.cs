@@ -26,19 +26,8 @@ public class AuthService(IUserRepository _userRepo,
         PasswordHasher<User> passwordHasher = new();
         user.PasswordHash = passwordHasher.HashPassword(user, nuDTO.Password == String.Empty ? nuDTO.Username : nuDTO.Password);
         if (position is not null) user.Position = (Position)position;
-        try
-        {
-            await _userRepo.AddUserAsync(user);
-        }
-        catch (DbUpdateException ex)
-            when (ex.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } pgr)
-        {
-            if (pgr.ConstraintName == "IX_Users_Username")
-            {
-                throw new UserAlreadyExistsException("Username already exists.");
-            }
-            throw;
-        }
+        if (await _userRepo.IsUsernameTaken(nuDTO.Username)) throw new UserAlreadyExistsException("This user already exists");
+        await _userRepo.AddUserAsync(user);
         return await GenerateTokensAsync(user);
 
     }
@@ -97,10 +86,10 @@ public class AuthService(IUserRepository _userRepo,
 
     public async Task<Dictionary<string, string>> AttemptRefreshAsync(string refreshToken)
     {
-        string? Guid = await _redis.GetAsync(refreshToken)
+        string? guid = await _redis.GetAsync(refreshToken)
             ?? throw new RefreshFailedException("Given refresh token is not valid");
         await _redis.RemoveAsync(refreshToken);
-        User? user = await _userRepo.GetUserByGuidAsync(Guid);
+        User? user = await _userRepo.GetUserByGuidAsync(Guid.Parse(guid));
         return await GenerateTokensAsync(user!, true);
     }
 
@@ -110,7 +99,7 @@ public class AuthService(IUserRepository _userRepo,
         var jwtSecurityToken = handler.ReadJwtToken(token);
         var claims = jwtSecurityToken.Claims;
         var UserId = claims.First(claim => claim.Type == "nameid").Value;
-        return await _userRepo.GetUserByGuidAsync(UserId);
+        return await _userRepo.GetUserByGuidAsync(Guid.Parse(UserId));
     }
 
     public async Task ClearTokensAsync(string accessToken, string refreshToken)

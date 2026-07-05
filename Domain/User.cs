@@ -36,5 +36,6 @@ public enum Position
     Secretary,
     Assistant,
     EducationalAdvisor,
+    Educator,
     Student
 }

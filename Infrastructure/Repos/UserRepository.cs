@@ -13,9 +13,9 @@ public class UserRepository(SystemDbContext _db) : IUserRepository
         await _db.SaveChangesAsync();
     }
 
-    public async Task<User?> GetUserByGuidAsync(string guid)
+    public async Task<User?> GetUserByGuidAsync(Guid guid)
     {
-        return await _db.Users.Where(u => u.Id.ToString() == guid).FirstOrDefaultAsync();
+        return await _db.Users.Where(u => u.Id == guid).FirstOrDefaultAsync();
     }
 
     public async Task<User?> GetUserByUsernameAsync(string username)

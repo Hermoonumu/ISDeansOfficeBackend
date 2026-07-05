@@ -11,7 +11,7 @@ public class DepartmentService(IDepartmentRepository _deptRepo) : IDepartmentSer
 
     public async Task<Department?> GetDepartmentByGuidAsync(string guid)
     {
-        return await _deptRepo.GetDepartmentByGuidAsync(guid);
+        return await _deptRepo.GetDepartmentByGuidAsync(Guid.Parse(guid));
     }
 
     public async Task<Department> NewDepartmentAsync(string name)
@@ -23,7 +23,7 @@ public class DepartmentService(IDepartmentRepository _deptRepo) : IDepartmentSer
 
     public async Task PatchDepartmentAsync(string guid, JsonPatchDocument<Department> Patch)
     {
-        Department? user = await _deptRepo.GetDepartmentByGuidAsync(guid) ??
+        Department? user = await _deptRepo.GetDepartmentByGuidAsync(Guid.Parse(guid)) ??
         throw new DepartmentDoesntExistException("No such department");
         Patch.ApplyTo(user, (err) =>
         {
@@ -34,7 +34,7 @@ public class DepartmentService(IDepartmentRepository _deptRepo) : IDepartmentSer
 
     public async Task RemoveDepartmentAsync(string guid)
     {
-        Department? dept = await _deptRepo.GetDepartmentByGuidAsync(guid) ??
+        Department? dept = await _deptRepo.GetDepartmentByGuidAsync(Guid.Parse(guid)) ??
                             throw new DepartmentDoesntExistException("No such department");
         await _deptRepo.RemoveDepartmentAsync(dept);
     }

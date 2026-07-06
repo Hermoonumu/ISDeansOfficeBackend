@@ -1,6 +1,7 @@
 using System.Text;
 using DeanInfoSystem.Application.Common.Auth;
 using DeanInfoSystem.Application.Common.Caching;
+using DeanInfoSystem.Application.Common.Handlers;
 using DeanInfoSystem.Application.Curricula;
 using DeanInfoSystem.Application.Enrollment;
 using DeanInfoSystem.Application.Programs;
@@ -19,6 +20,10 @@ using StackExchange.Redis;
 
 //Application configurator
 var builder = WebApplication.CreateBuilder(args);
+
+//Exception Handling
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 //Allow angular
 builder.Services.AddCors(options =>
@@ -150,6 +155,8 @@ builder.Services.AddAuthorizationBuilder()
     });
 
 var app = builder.Build();
+
+app.UseExceptionHandler();
 
 app.UseHttpsRedirection();
 app.UseRouting();

@@ -16,18 +16,7 @@ public class GradesController(IStudentGradeService _sgSvc) : ControllerBase
     [Authorize(Roles = "Educator,Assistant,EducationalAdvisor")]
     public async Task<IActionResult> Grade([FromBody] GradeDTO gDTO, [FromRoute] Guid GradeId)
     {
-        try
-        {
-            await _sgSvc.GradeAsync(GradeId, gDTO.Grade);
-        }
-        catch (GradeDoesntExistException e)
-        {
-            return NotFound(new { e.Message });
-        }
-        catch (UpdateFailedException e)
-        {
-            return StatusCode(422, new { e.Message });
-        }
+        await _sgSvc.GradeAsync(GradeId, gDTO.Grade);
         return Ok();
     }
 }

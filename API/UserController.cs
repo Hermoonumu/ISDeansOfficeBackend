@@ -22,14 +22,7 @@ public class UserController(IUserService _userSvc,
     [HttpPost]
     public async Task<IActionResult> NewUserAsync([FromBody] NewUserDTO nuDTO)
     {
-        try
-        {
-            await _authSvc.RegisterAsync(nuDTO);
-        }
-        catch
-        {
-            return StatusCode(500);
-        }
+        await _authSvc.RegisterAsync(nuDTO);
         return StatusCode(201);
     }
 
@@ -37,14 +30,7 @@ public class UserController(IUserService _userSvc,
     [HttpPatch("{UserId}")]
     public async Task<IActionResult> PatchUser([FromRoute] Guid UserId, [FromBody] JsonPatchDocument<UserUpdateDTO> UserPatch)
     {
-        try
-        {
-            await _userSvc.PatchUserAsync(UserId, UserPatch);
-        }
-        catch (UpdateFailedException e)
-        {
-            return BadRequest(new { e.Message });
-        }
+        await _userSvc.PatchUserAsync(UserId, UserPatch);
         return Ok();
     }
 
@@ -52,14 +38,7 @@ public class UserController(IUserService _userSvc,
     [Authorize(Policy = "DeanViceDeanSecretary")]
     public async Task<IActionResult> RemoveUser([FromRoute] Guid UserId)
     {
-        try
-        {
-            await _userSvc.RemoveUserAsync(UserId);
-        }
-        catch (UserDoesntExistException e)
-        {
-            return BadRequest(new { e.Message });
-        }
+        await _userSvc.RemoveUserAsync(UserId);
         return Ok();
     }
 
@@ -68,22 +47,7 @@ public class UserController(IUserService _userSvc,
     public async Task<IActionResult> EnrollStudent([FromRoute] Guid UserId,
                                                     [FromRoute] Guid ProgramId)
     {
-        try
-        {
-            await _enrollSvc.EnrollStudentIntoProgramAsync(UserId, ProgramId);
-        }
-        catch (UserDoesntExistException e)
-        {
-            return NotFound(new { e.Message });
-        }
-        catch (ProgramDoesntExistException e)
-        {
-            return NotFound(new { e.Message });
-        }
-        catch (PositionException e)
-        {
-            return StatusCode(422, new { e.Message });
-        }
+        await _enrollSvc.EnrollStudentIntoProgramAsync(UserId, ProgramId);
         return Ok();
     }
 
@@ -92,26 +56,7 @@ public class UserController(IUserService _userSvc,
     public async Task<IActionResult> AssignProfessorToSubject([FromRoute] Guid UserId,
                                                                 [FromRoute] Guid SubjectId)
     {
-        try
-        {
-            await _userSvc.AssignProfToSubjectAsync(SubjectId, UserId);
-        }
-        catch (UserDoesntExistException e)
-        {
-            return NotFound(new { e.Message });
-        }
-        catch (SubjectDoesntExistException e)
-        {
-            return NotFound(new { e.Message });
-        }
-        catch (UpdateFailedException e)
-        {
-            return Conflict(new { e.Message });
-        }
-        catch (PositionException e)
-        {
-            return StatusCode(422, new { e.Message });
-        }
+        await _userSvc.AssignProfToSubjectAsync(SubjectId, UserId);
         return Ok();
     }
 
@@ -120,14 +65,7 @@ public class UserController(IUserService _userSvc,
     public async Task<IActionResult> GetAllProfSubjects([FromRoute] Guid UserId)
     {
         List<Subject> subjects;
-        try
-        {
-            subjects = await _userSvc.GetSubjectsAssignedAsync(UserId);
-        }
-        catch (UserDoesntExistException e)
-        {
-            return NotFound(new { e.Message });
-        }
+        subjects = await _userSvc.GetSubjectsAssignedAsync(UserId);
         return Ok(subjects);
     }
 }

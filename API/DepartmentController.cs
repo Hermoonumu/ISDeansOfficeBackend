@@ -30,14 +30,7 @@ public class DepartmentController(IDepartmentService _deptSvc) : ControllerBase
     [Authorize(Policy = "Dean")]
     public async Task<IActionResult> PatchDepartment([FromRoute] Guid DeptId, [FromBody] JsonPatchDocument<Department> DeptPatch)
     {
-        try
-        {
-            await _deptSvc.PatchDepartmentAsync(DeptId, DeptPatch);
-        }
-        catch (UpdateFailedException e)
-        {
-            return BadRequest(new { e.Message });
-        }
+        await _deptSvc.PatchDepartmentAsync(DeptId, DeptPatch);
         return Ok();
     }
 
@@ -52,14 +45,8 @@ public class DepartmentController(IDepartmentService _deptSvc) : ControllerBase
     [Authorize(Policy = "Dean")]
     public async Task<IActionResult> DeleteDepartment([FromRoute] Guid DeptId)
     {
-        try
-        {
-            await _deptSvc.RemoveDepartmentAsync(DeptId);
-        }
-        catch (DepartmentDoesntExistException e)
-        {
-            return BadRequest(new { e.Message });
-        }
+        await _deptSvc.RemoveDepartmentAsync(DeptId);
+
         return Ok();
     }
 }

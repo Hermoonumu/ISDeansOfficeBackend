@@ -18,14 +18,7 @@ public class AuthController(IAuthService _authSvc,
     public async Task<IActionResult> Login([FromBody] LoginFormDTO lfDTO)
     {
         Dictionary<string, string> tokens;
-        try
-        {
-            tokens = await _authSvc.LoginAsync(lfDTO);
-        }
-        catch (Exception e)
-        {
-            return Unauthorized(new { Message = e.Message });
-        }
+        tokens = await _authSvc.LoginAsync(lfDTO);
         await ComposeCookies(HttpContext, tokens);
         return Ok();
     }

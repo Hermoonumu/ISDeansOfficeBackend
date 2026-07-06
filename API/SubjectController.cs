@@ -18,14 +18,7 @@ public class SubjectController(ISubjectService _subjSvc) : ControllerBase
     public async Task<IActionResult> NewSubject([FromBody] NewSubjectDTO nsDTO)
     {
         Guid guid;
-        try
-        {
-            guid = await _subjSvc.AddSubjectAsync(nsDTO);
-        }
-        catch (SubjectAlreadyExistsException e)
-        {
-            return Conflict(new { e.Message });
-        }
+        guid = await _subjSvc.AddSubjectAsync(nsDTO);
         return StatusCode(201, new { Id = guid.ToString() });
     }
 
@@ -34,14 +27,7 @@ public class SubjectController(ISubjectService _subjSvc) : ControllerBase
     public async Task<IActionResult> ChangeSubjectName([FromBody] SubjectUpdateDTO NewName,
                                                         [FromRoute] Guid Id)
     {
-        try
-        {
-            await _subjSvc.ChangeSubjectNameAsync(Id, NewName.NewName);
-        }
-        catch (SubjectDoesntExistException e)
-        {
-            return NotFound(new { e.Message });
-        }
+        await _subjSvc.ChangeSubjectNameAsync(Id, NewName.NewName);
         return Ok();
 
     }

@@ -20,9 +20,9 @@ public class SubjectService(ISubjectRepository _subjRepo) : ISubjectService
         throw new SubjectAlreadyExistsException("This subject already exists");
     }
 
-    public async Task ChangeSubjectNameAsync(string Id, string name)
+    public async Task ChangeSubjectNameAsync(Guid Id, string name)
     {
-        Subject? subject = await _subjRepo.GetSubjectByGuidAsync(Guid.Parse(Id)) ??
+        Subject? subject = await _subjRepo.GetSubjectByGuidAsync(Id) ??
         throw new SubjectDoesntExistException("No such subject");
         if (!await _subjRepo.IsSubjectNameTaken(name))
         {
@@ -32,8 +32,8 @@ public class SubjectService(ISubjectRepository _subjRepo) : ISubjectService
     }
 
 
-    public async Task RemoveSubjectAsync(string Id)
+    public async Task RemoveSubjectAsync(Guid Id)
     {
-        await _subjRepo.RemoveSubjectAsync(Guid.Parse(Id));
+        await _subjRepo.RemoveSubjectAsync(Id);
     }
 }

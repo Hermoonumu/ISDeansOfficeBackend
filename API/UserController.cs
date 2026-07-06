@@ -35,7 +35,7 @@ public class UserController(IUserService _userSvc,
 
     [Authorize(Roles = "Dean,ViceDean,Secretary")]
     [HttpPatch("{UserId}")]
-    public async Task<IActionResult> PatchUser([FromRoute] string UserId, [FromBody] JsonPatchDocument<UserUpdateDTO> UserPatch)
+    public async Task<IActionResult> PatchUser([FromRoute] Guid UserId, [FromBody] JsonPatchDocument<UserUpdateDTO> UserPatch)
     {
         try
         {
@@ -50,7 +50,7 @@ public class UserController(IUserService _userSvc,
 
     [HttpDelete("{UserId}")]
     [Authorize(Policy = "DeanViceDeanSecretary")]
-    public async Task<IActionResult> RemoveUser([FromRoute] string UserId)
+    public async Task<IActionResult> RemoveUser([FromRoute] Guid UserId)
     {
         try
         {
@@ -65,8 +65,8 @@ public class UserController(IUserService _userSvc,
 
     [HttpPost("{UserId}/enroll/{ProgramId}")]
     [Authorize(Roles = "Dean,ViceDean,Secretary")]
-    public async Task<IActionResult> EnrollStudent([FromRoute] string UserId,
-                                                    [FromRoute] string ProgramId)
+    public async Task<IActionResult> EnrollStudent([FromRoute] Guid UserId,
+                                                    [FromRoute] Guid ProgramId)
     {
         try
         {
@@ -89,8 +89,8 @@ public class UserController(IUserService _userSvc,
 
     [HttpPost("{UserId}/assignSubject/{SubjectId}")]
     [Authorize(Roles = "Dean,ViceDean")]
-    public async Task<IActionResult> AssignProfessorToSubject([FromRoute] string UserId,
-                                                                [FromRoute] string SubjectId)
+    public async Task<IActionResult> AssignProfessorToSubject([FromRoute] Guid UserId,
+                                                                [FromRoute] Guid SubjectId)
     {
         try
         {
@@ -117,7 +117,7 @@ public class UserController(IUserService _userSvc,
 
     [HttpGet("{UserId}/subjects")]
     [Authorize]
-    public async Task<IActionResult> GetAllProfSubjects([FromRoute] string UserId)
+    public async Task<IActionResult> GetAllProfSubjects([FromRoute] Guid UserId)
     {
         List<Subject> subjects;
         try

@@ -7,5 +7,5 @@ namespace DeanInfoSystem.Application.Programs;
 public interface IProgramService
 {
     public Task AddProgramAsync(NewProgramDTO npDTO);
-    public Task<Guid> AssignSubjectToProgramAsync(string ProgramId, AddSubjectToProgramDTO astpDTO);
+    public Task<Guid> AssignSubjectToProgramAsync(Guid ProgramId, AddSubjectToProgramDTO astpDTO);
 }

@@ -23,48 +23,43 @@ public class UserService(IUserRepository _userRepo,
         await _userRepo.AddUserAsync(user);
     }
 
-    public async Task AssignProfToSubjectAsync(string SubjId, string UserId)
+    public async Task AssignProfToSubjectAsync(Guid SubjId, Guid UserId)
     {
-        Guid SubjGuid = Guid.Parse(SubjId);
-        Guid UserGuid = Guid.Parse(UserId);
-        User? user = await _userRepo.GetUserByGuidAsync(UserGuid) ??
+        User? user = await _userRepo.GetUserByGuidAsync(UserId) ??
         throw new UserDoesntExistException("No such user");
-        Subject? subject = await _subjRepo.GetSubjectByGuidAsync(SubjGuid) ??
+        Subject? subject = await _subjRepo.GetSubjectByGuidAsync(SubjId) ??
         throw new SubjectDoesntExistException("No such subject");
         if (user.Position != Position.Educator)
             throw new PositionException("The user is not an educator");
-        if (await _prsuRepo.IsAlreadyAssigned(UserGuid, SubjGuid))
+        if (await _prsuRepo.IsAlreadyAssigned(UserId, SubjId))
             throw new UpdateFailedException("The user has this subject assigned already");
-        await _prsuRepo.AssignUserToSubjectAsync(UserGuid, SubjGuid);
+        await _prsuRepo.AssignUserToSubjectAsync(UserId, SubjId);
     }
 
-    public async Task DismissUserFromSubjectAsync(string UserId, string SubjectId)
+    public async Task DismissUserFromSubjectAsync(Guid UserId, Guid SubjectId)
     {
-        Guid UserGuid = Guid.Parse(UserId);
-        Guid SubjectGuid = Guid.Parse(SubjectId);
-        User? user = await _userRepo.GetUserByGuidAsync(UserGuid) ??
+        User? user = await _userRepo.GetUserByGuidAsync(UserId) ??
         throw new UserDoesntExistException("No such user");
-        Subject? subject = await _subjRepo.GetSubjectByGuidAsync(SubjectGuid) ??
+        Subject? subject = await _subjRepo.GetSubjectByGuidAsync(SubjectId) ??
         throw new SubjectDoesntExistException("No such subject");
         if (user.Position != Position.Educator)
             throw new PositionException("The user is not an educator");
-        if (await _prsuRepo.IsAlreadyAssigned(UserGuid, SubjectGuid))
-            await _prsuRepo.DismissUserFromSubjectAsync(UserGuid, SubjectGuid);
+        if (await _prsuRepo.IsAlreadyAssigned(UserId, SubjectId))
+            await _prsuRepo.DismissUserFromSubjectAsync(UserId, SubjectId);
         throw new UpdateFailedException("The user is not assigned to this subject");
     }
 
-    public async Task<List<Subject>> GetSubjectsAssignedAsync(string UserId)
+    public async Task<List<Subject>> GetSubjectsAssignedAsync(Guid UserId)
     {
-        Guid UserGuid = Guid.Parse(UserId);
-        User? user = await _userRepo.GetUserByGuidAsync(UserGuid) ??
+        User? user = await _userRepo.GetUserByGuidAsync(UserId) ??
         throw new UserDoesntExistException("No such user");
-        return await _prsuRepo.GetSubjectsAssignedAsync(UserGuid);
+        return await _prsuRepo.GetSubjectsAssignedAsync(UserId);
     }
 
 
-    public async Task PatchUserAsync(string guid, JsonPatchDocument<UserUpdateDTO> Patch)
+    public async Task PatchUserAsync(Guid guid, JsonPatchDocument<UserUpdateDTO> Patch)
     {
-        User? user = await _userRepo.GetUserByGuidAsync(Guid.Parse(guid)) ??
+        User? user = await _userRepo.GetUserByGuidAsync(guid) ??
         throw new UserDoesntExistException("No such user");
         UserUpdateDTO bfPatch = new()
         {
@@ -85,9 +80,9 @@ public class UserService(IUserRepository _userRepo,
         await _userRepo.PersistChangesAsync();
     }
 
-    public async Task RemoveUserAsync(string guid)
+    public async Task RemoveUserAsync(Guid guid)
     {
-        User user = await _userRepo.GetUserByGuidAsync(Guid.Parse(guid)) ??
+        User user = await _userRepo.GetUserByGuidAsync(guid) ??
                         throw new UserDoesntExistException("No such user");
         await _userRepo.RemoveUserAsync(user);
     }

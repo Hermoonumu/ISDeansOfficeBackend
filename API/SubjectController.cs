@@ -32,7 +32,7 @@ public class SubjectController(ISubjectService _subjSvc) : ControllerBase
     [HttpPatch("{Id}")]
     [Authorize(Roles = "Dean,ViceDean,EducationalAdvisor")]
     public async Task<IActionResult> ChangeSubjectName([FromBody] SubjectUpdateDTO NewName,
-                                                        [FromRoute] string Id)
+                                                        [FromRoute] Guid Id)
     {
         try
         {
@@ -48,7 +48,7 @@ public class SubjectController(ISubjectService _subjSvc) : ControllerBase
 
     [HttpDelete("{Id}")]
     [Authorize(Roles = "Dean,ViceDean,EducationalAdvisor")]
-    public async Task<IActionResult> DeleteSubject([FromRoute] string Id)
+    public async Task<IActionResult> DeleteSubject([FromRoute] Guid Id)
     {
         await _subjSvc.RemoveSubjectAsync(Id);
         return Ok();

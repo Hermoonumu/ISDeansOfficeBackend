@@ -14,7 +14,7 @@ public class GradesController(IStudentGradeService _sgSvc) : ControllerBase
 {
     [HttpPost("{GradeId}")]
     [Authorize(Roles = "Educator,Assistant,EducationalAdvisor")]
-    public async Task<IActionResult> Grade([FromBody] GradeDTO gDTO, [FromRoute] string GradeId)
+    public async Task<IActionResult> Grade([FromBody] GradeDTO gDTO, [FromRoute] Guid GradeId)
     {
         try
         {

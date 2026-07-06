@@ -88,9 +88,10 @@ public class AuthService(IUserRepository _userRepo,
     {
         string? guid = await _redis.GetAsync(refreshToken)
             ?? throw new RefreshFailedException("Given refresh token is not valid");
-        await _redis.RemoveAsync(refreshToken);
         User? user = await _userRepo.GetUserByGuidAsync(Guid.Parse(guid));
-        return await GenerateTokensAsync(user!, true);
+        var tokens = await GenerateTokensAsync(user!, true);
+        await _redis.RemoveAsync(refreshToken);
+        return tokens;
     }
 
     public async Task<User?> AuthenticateUserAsync(string token)

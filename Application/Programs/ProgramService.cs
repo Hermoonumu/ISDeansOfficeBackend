@@ -27,10 +27,10 @@ public class ProgramService(IProgramRepository _progRepo,
         );
     }
 
-    public async Task<Guid> AssignSubjectToProgramAsync(string ProgramId,
+    public async Task<Guid> AssignSubjectToProgramAsync(Guid ProgramId,
                                                     AddSubjectToProgramDTO astpDTO)
     {
-        EdProgram? Program = await _progRepo.GetProgramByGuidAsync(Guid.Parse(ProgramId))
+        EdProgram? Program = await _progRepo.GetProgramByGuidAsync(ProgramId)
         ?? throw new ProgramDoesntExistException("No such program");
 
         Curriculum curriculum = new()

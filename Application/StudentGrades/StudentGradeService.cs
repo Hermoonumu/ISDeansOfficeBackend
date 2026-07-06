@@ -6,10 +6,9 @@ namespace DeanInfoSystem.Application.StudentGrades;
 
 public class StudentGradeService(IStudentGradeRepository _sgRepo) : IStudentGradeService
 {
-    public async Task GradeAsync(string cardId, uint grade)
+    public async Task GradeAsync(Guid cardId, uint grade)
     {
-        Guid guid = Guid.Parse(cardId);
-        StudentGrade? sg = await _sgRepo.GetStudentGradeByGuidAsync(guid)
+        StudentGrade? sg = await _sgRepo.GetStudentGradeByGuidAsync(cardId)
         ?? throw new GradeDoesntExistException("No such grade");
 
         if (sg.Status == Status.Passed) throw new UpdateFailedException("The exam has been passed");

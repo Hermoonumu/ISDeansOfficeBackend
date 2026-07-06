@@ -28,7 +28,7 @@ public class DepartmentController(IDepartmentService _deptSvc) : ControllerBase
 
     [HttpPatch("{DeptId}")]
     [Authorize(Policy = "Dean")]
-    public async Task<IActionResult> PatchDepartment([FromRoute] string DeptId, [FromBody] JsonPatchDocument<Department> DeptPatch)
+    public async Task<IActionResult> PatchDepartment([FromRoute] Guid DeptId, [FromBody] JsonPatchDocument<Department> DeptPatch)
     {
         try
         {
@@ -42,7 +42,7 @@ public class DepartmentController(IDepartmentService _deptSvc) : ControllerBase
     }
 
     [HttpGet("{DeptId}")]
-    public async Task<ActionResult<Department>> GetDepartmentByGuid([FromRoute] string DeptId)
+    public async Task<ActionResult<Department>> GetDepartmentByGuid([FromRoute] Guid DeptId)
     {
         return Ok(await _deptSvc.GetDepartmentByGuidAsync(DeptId));
     }
@@ -50,7 +50,7 @@ public class DepartmentController(IDepartmentService _deptSvc) : ControllerBase
 
     [HttpDelete("{DeptId}")]
     [Authorize(Policy = "Dean")]
-    public async Task<IActionResult> DeleteDepartment([FromRoute] string DeptId)
+    public async Task<IActionResult> DeleteDepartment([FromRoute] Guid DeptId)
     {
         try
         {

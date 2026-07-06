@@ -30,7 +30,7 @@ public class ProgramController(IProgramService _progSvc) : ControllerBase
 
     [Authorize(Roles = "EducationalAdvisor,Educator,ViceDean,Dean")]
     [HttpPost("{ProgId}")]
-    public async Task<IActionResult> AssignSubjectToProgram([FromRoute] string ProgId,
+    public async Task<IActionResult> AssignSubjectToProgram([FromRoute] Guid ProgId,
                                                             [FromBody] AddSubjectToProgramDTO astpDTO)
     {
         Guid guid;

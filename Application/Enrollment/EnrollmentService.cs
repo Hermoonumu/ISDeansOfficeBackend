@@ -13,12 +13,11 @@ public class EnrollmentService(IProgramRepository _progRepo,
                             IUserRepository _userRepo,
                             IStudentGradeRepository _sgRepo) : IEnrollmentService
 {
-    public async Task EnrollStudentIntoProgramAsync(string StudentId, string ProgramId)
+    public async Task EnrollStudentIntoProgramAsync(Guid StudentId, Guid ProgramId)
     {
-        Guid progId = Guid.Parse(ProgramId);
-        User? student = await _userRepo.GetUserByGuidAsync(Guid.Parse(StudentId))
+        User? student = await _userRepo.GetUserByGuidAsync(StudentId)
         ?? throw new UserDoesntExistException("No such user");
-        EdProgram? edProgram = await _progRepo.GetProgramByGuidAsync(progId)
+        EdProgram? edProgram = await _progRepo.GetProgramByGuidAsync(ProgramId)
         ?? throw new ProgramDoesntExistException("No such program");
 
         if (student.Position != Position.Student)
@@ -27,10 +26,10 @@ public class EnrollmentService(IProgramRepository _progRepo,
         if (student.ProgramId != null)
             throw new EnrollmentException("This student is already enrolled in a program");
 
-        student.ProgramId = progId;
+        student.ProgramId = ProgramId;
         await _userRepo.PersistChangesAsync();
 
-        List<Curriculum> curricula = await _currRepo.GetAllCurriculaByProgramAsync(progId);
+        List<Curriculum> curricula = await _currRepo.GetAllCurriculaByProgramAsync(ProgramId);
 
         foreach (Curriculum curr in curricula)
         {

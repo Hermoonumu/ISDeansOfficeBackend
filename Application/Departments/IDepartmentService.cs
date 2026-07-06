@@ -5,7 +5,7 @@ public interface IDepartmentService
 {
     public Task<Department> NewDepartmentAsync(string name);
     public Task<List<Department>> GetAllDepartmentsAsync();
-    public Task<Department?> GetDepartmentByGuidAsync(string guid);
-    public Task PatchDepartmentAsync(string guid, JsonPatchDocument<Department> Patch);
-    public Task RemoveDepartmentAsync(string guid);
+    public Task<Department?> GetDepartmentByGuidAsync(Guid guid);
+    public Task PatchDepartmentAsync(Guid guid, JsonPatchDocument<Department> Patch);
+    public Task RemoveDepartmentAsync(Guid guid);
 }

@@ -20,6 +20,9 @@ public class EnrollmentService(IProgramRepository _progRepo,
         EdProgram? edProgram = await _progRepo.GetProgramByGuidAsync(ProgramId)
         ?? throw new ProgramDoesntExistException("No such program");
 
+        if (edProgram.ProgramStatus != ProgramStatus.Approved)
+            throw new EnrollmentException("Cannot enroll in a program that is not active.");
+
         if (student.Position != Position.Student)
             throw new PositionException("This user is not a student");
 
@@ -30,16 +33,16 @@ public class EnrollmentService(IProgramRepository _progRepo,
         await _userRepo.PersistChangesAsync();
 
         List<Curriculum> curricula = await _currRepo.GetAllCurriculaByProgramAsync(ProgramId);
-
+        List<StudentGrade> sgs = [];
         foreach (Curriculum curr in curricula)
         {
-            StudentGrade sg = new StudentGrade()
+            sgs.Add(new StudentGrade()
             {
                 StudentId = student.Id,
                 Status = Status.Pending,
                 CurriculumId = curr.Id
-            };
-            await _sgRepo.InstantiateGradeAsync(sg);
+            });
         }
+        await _sgRepo.InstantiateGradesRangeAsync(sgs);
     }
 }

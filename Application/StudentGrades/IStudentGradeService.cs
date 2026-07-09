@@ -1,7 +1,12 @@
+using DeanInfoSystem.Application.DTO;
+using DeanInfoSystem.Domain;
+
 namespace DeanInfoSystem.Application.StudentGrades;
 
 
 public interface IStudentGradeService
 {
     public Task GradeAsync(Guid cardId, uint grade);
+    public Task BulkGradeAsync(List<BulkGradeDTO> bgDTO);
+    public Task<List<StudentGrade>> GetStudentGradesAsync(Guid StudentId);
 }

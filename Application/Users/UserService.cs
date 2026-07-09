@@ -23,7 +23,7 @@ public class UserService(IUserRepository _userRepo,
         await _userRepo.AddUserAsync(user);
     }
 
-    public async Task AssignProfToSubjectAsync(Guid SubjId, Guid UserId)
+    public async Task AssignProfToSubjectAsync(Guid UserId, Guid SubjId)
     {
         User? user = await _userRepo.GetUserByGuidAsync(UserId) ??
         throw new UserDoesntExistException("No such user");
@@ -49,6 +49,18 @@ public class UserService(IUserRepository _userRepo,
         throw new UpdateFailedException("The user is not assigned to this subject");
     }
 
+    public async Task<List<UserDTO>> GetAllUsersByPositionPageAsync(Position pos, int page, int take)
+    {
+        List<User> users = await _userRepo.GetAllUsersByPositionPageAsync(pos, page, take);
+        return [.. users.Select(UserMapper.UserToDTO)];
+    }
+
+    public async Task<List<UserDTO>> GetAllUsersPageAsync(int page, int take)
+    {
+        List<User> users = await _userRepo.GetAllUsersPageAsync(page, take);
+        return [.. users.Select(UserMapper.UserToDTO)];
+    }
+
     public async Task<List<Subject>> GetSubjectsAssignedAsync(Guid UserId)
     {
         User? user = await _userRepo.GetUserByGuidAsync(UserId) ??
@@ -56,6 +68,11 @@ public class UserService(IUserRepository _userRepo,
         return await _prsuRepo.GetSubjectsAssignedAsync(UserId);
     }
 
+    public async Task<User?> GetUserByGuidAsync(Guid UserId)
+    {
+        return await _userRepo.GetUserByGuidAsync(UserId) ??
+        throw new UserDoesntExistException("No such user");
+    }
 
     public async Task PatchUserAsync(Guid guid, JsonPatchDocument<UserUpdateDTO> Patch)
     {

@@ -16,7 +16,6 @@ public class ProgramController(IProgramService _progSvc) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> NewProgram([FromBody] NewProgramDTO npDTO)
     {
-        Guid guid;
         await _progSvc.AddProgramAsync(npDTO);
 
         return Created();
@@ -30,5 +29,13 @@ public class ProgramController(IProgramService _progSvc) : ControllerBase
         Guid guid;
         guid = await _progSvc.AssignSubjectToProgramAsync(ProgId, astpDTO);
         return StatusCode(201, new { Id = guid.ToString() });
+    }
+
+
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> GetPrograms()
+    {
+        return StatusCode(500);
     }
 }

@@ -2,6 +2,7 @@ namespace DeanInfoSystem.API;
 
 using DeanInfoSystem.Application.Common.Auth;
 using DeanInfoSystem.Application.Common.Exceptions;
+using DeanInfoSystem.Application.Common.Mappers;
 using DeanInfoSystem.Application.DTO;
 using DeanInfoSystem.Application.Enrollment;
 using DeanInfoSystem.Application.Users;
@@ -56,7 +57,16 @@ public class UserController(IUserService _userSvc,
     public async Task<IActionResult> AssignProfessorToSubject([FromRoute] Guid UserId,
                                                                 [FromRoute] Guid SubjectId)
     {
-        await _userSvc.AssignProfToSubjectAsync(SubjectId, UserId);
+        await _userSvc.AssignProfToSubjectAsync(UserId, SubjectId);
+        return Ok();
+    }
+
+    [HttpPost("{UserId}/dismiss/{SubjectId}")]
+    [Authorize(Roles = "Dean,ViceDean")]
+    public async Task<IActionResult> DismissProfessorFromSubject([FromRoute] Guid UserId,
+                                                                [FromRoute] Guid SubjectId)
+    {
+        await _userSvc.DismissUserFromSubjectAsync(UserId, SubjectId);
         return Ok();
     }
 
@@ -68,4 +78,30 @@ public class UserController(IUserService _userSvc,
         subjects = await _userSvc.GetSubjectsAssignedAsync(UserId);
         return Ok(subjects);
     }
+
+    [HttpGet("{UserId}")]
+    [Authorize]
+    public async Task<IActionResult> GetUserByGuid([FromRoute] Guid UserId)
+    {
+        User user = (await _userSvc.GetUserByGuidAsync(UserId))!;
+        return Ok(UserMapper.UserToDTO(user));
+    }
+
+    [HttpGet("paginated")]
+    [Authorize]
+    public async Task<IActionResult> GetAllUsersPage([FromQuery] int page = 0,
+                                                    [FromQuery] int take = 10)
+    {
+        return Ok(await _userSvc.GetAllUsersPageAsync(page, take));
+    }
+
+    [HttpGet("position/{Position}")]
+    [Authorize]
+    public async Task<IActionResult> GetAllUsersByPositionPage([FromRoute] Position Position,
+                                                                [FromQuery] int page = 0,
+                                                                [FromQuery] int take = 10)
+    {
+        return Ok(await _userSvc.GetAllUsersByPositionPageAsync(Position, page, take));
+    }
+
 }

@@ -48,5 +48,4 @@ public class ProgramService(IProgramRepository _progRepo,
         await _currRepo.AddCurriculumAsync(curriculum);
         return curriculum.Id;
     }
-
 }

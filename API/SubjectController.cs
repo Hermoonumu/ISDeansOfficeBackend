@@ -32,6 +32,21 @@ public class SubjectController(ISubjectService _subjSvc) : ControllerBase
 
     }
 
+    [HttpGet("paginated")]
+    [Authorize]
+    public async Task<IActionResult> GetAllSubjectsPaginated([FromQuery] int page,
+                                                            [FromQuery] int take)
+    {
+        return Ok(await _subjSvc.GetAllSubjectsPageAsync(page, take));
+    }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> GetAllSubjects()
+    {
+        return Ok(await _subjSvc.GetAllSubjectsAsync());
+    }
+
     [HttpDelete("{Id}")]
     [Authorize(Roles = "Dean,ViceDean,EducationalAdvisor")]
     public async Task<IActionResult> DeleteSubject([FromRoute] Guid Id)

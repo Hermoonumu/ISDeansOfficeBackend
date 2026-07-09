@@ -1,5 +1,4 @@
 using DeanInfoSystem.Application.Common.Exceptions;
-using DeanInfoSystem.Domain;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 

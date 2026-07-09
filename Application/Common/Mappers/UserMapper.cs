@@ -19,4 +19,16 @@ public static class UserMapper
             Position = nuDTO.Position
         };
     }
+    public static UserDTO UserToDTO(User user)
+    {
+        return new UserDTO()
+        {
+            Id = user.Id,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Username = user.Username,
+            BirthDate = user.BirthDate,
+            Position = user.Position
+        };
+    }
 }

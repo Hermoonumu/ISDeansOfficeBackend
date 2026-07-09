@@ -9,4 +9,6 @@ public interface ISubjectRepository
     public Task<Subject?> GetSubjectByGuidAsync(Guid guid);
     public Task RemoveSubjectAsync(Guid guid);
     public Task PersistChangesAsync();
+    public Task<List<Subject>> GetAllSubjectsPageAsync(int page, int take);
+    public Task<List<Subject>> GetAllSubjectsAsync();
 }

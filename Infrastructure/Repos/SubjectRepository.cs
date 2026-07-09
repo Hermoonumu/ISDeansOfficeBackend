@@ -14,6 +14,18 @@ public class SubjectRepository(SystemDbContext _db) : ISubjectRepository
         await _db.SaveChangesAsync();
     }
 
+    public async Task<List<Subject>> GetAllSubjectsAsync()
+    {
+        return await _db.Subjects.ToListAsync();
+    }
+
+    public async Task<List<Subject>> GetAllSubjectsPageAsync(int page, int take)
+    {
+        return await _db.Subjects.Skip(page * 10)
+                                    .Take(take)
+                                    .ToListAsync();
+    }
+
     public async Task<Subject?> GetSubjectByGuidAsync(Guid guid)
     {
         return await _db.Subjects.Where(s => s.Id == guid).FirstOrDefaultAsync();

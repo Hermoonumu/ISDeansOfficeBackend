@@ -6,6 +6,8 @@ namespace DeanInfoSystem.Application.StudentGrades;
 public interface IStudentGradeRepository
 {
     public Task InstantiateGradeAsync(StudentGrade sg);
+    public Task InstantiateGradesRangeAsync(List<StudentGrade> sgs);
     public Task<StudentGrade?> GetStudentGradeByGuidAsync(Guid guid);
     public Task PersistChangesAsync();
+    public Task<List<StudentGrade>> GetStudentGradesAsync(Guid StudentId);
 }

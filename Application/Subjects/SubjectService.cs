@@ -36,4 +36,14 @@ public class SubjectService(ISubjectRepository _subjRepo) : ISubjectService
     {
         await _subjRepo.RemoveSubjectAsync(Id);
     }
+
+    public async Task<List<Subject>> GetAllSubjectsPageAsync(int page = 0, int take = 10)
+    {
+        return await _subjRepo.GetAllSubjectsPageAsync(page, take);
+    }
+
+    public async Task<List<Subject>> GetAllSubjectsAsync()
+    {
+        return await _subjRepo.GetAllSubjectsAsync();
+    }
 }

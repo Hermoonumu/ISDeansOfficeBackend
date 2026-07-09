@@ -112,12 +112,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                                             .HttpContext
                                             .Request
                                             .Cookies["AccessToken"];
-                    var _redis = context
+                    var _cache = context
                                     .HttpContext
                                     .RequestServices
-                                    .GetRequiredService<ICacheService>()
-                                    .GetRedis();
-                    var isRevoked = await _redis.StringGetAsync($"Revoked_{TokenToCheck}");
+                                    .GetRequiredService<ICacheService>();
+                    var isRevoked = await _cache.GetAsync($"Revoked_{TokenToCheck}");
                     if (!string.IsNullOrEmpty(isRevoked))
                     {
                         context.Fail("Token has been revoked.");

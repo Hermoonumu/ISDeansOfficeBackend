@@ -8,7 +8,7 @@ public class SystemDbContext : DbContext
     public required DbSet<Department> Departments { get; set; }
     public required DbSet<Curriculum> Curricula { get; set; }
     public required DbSet<StudentGrade> Grades { get; set; }
-    public required DbSet<ProfessorSubject> UserSubj { set; get; }
+    public required DbSet<EducatorCurriculum> EducCurr { set; get; }
 
 
     public SystemDbContext(DbContextOptions options) : base(options) { }
@@ -91,22 +91,23 @@ public class SystemDbContext : DbContext
         });
 
 
-        mBuild.Entity<ProfessorSubject>(ps =>
-        {
-            ps.HasKey(e => e.Id);
+        mBuild.Entity<EducatorCurriculum>(ec =>
+            {
+                ec.HasKey(e => e.Id);
 
-            ps.HasIndex(e => new { e.SubjectId, e.UserId });
+                // Prevent duplicate assignments
+                ec.HasIndex(e => new { e.UserId, e.CurriculumId }).IsUnique();
 
-            ps.HasOne(e => e.User)
-            .WithMany()
-            .HasForeignKey(e => e.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
+                ec.HasOne(e => e.User)
+                  .WithMany()
+                  .HasForeignKey(e => e.UserId)
+                  .OnDelete(DeleteBehavior.Cascade);
 
-            ps.HasOne(e => e.Subject)
-              .WithMany()
-              .HasForeignKey(e => e.SubjectId)
-              .OnDelete(DeleteBehavior.Cascade);
-        });
+                ec.HasOne(e => e.Curriculum)
+                  .WithMany()
+                  .HasForeignKey(e => e.CurriculumId)
+                  .OnDelete(DeleteBehavior.Cascade);
+            });
 
     }
 

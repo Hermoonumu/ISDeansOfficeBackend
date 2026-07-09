@@ -19,4 +19,14 @@ public class ProgramRepository(SystemDbContext _db) : IProgramRepository
     {
         return await _db.Programs.Where(p => p.Id == guid).FirstOrDefaultAsync();
     }
+
+    public async Task<List<EdProgram>> GetProgramsPageAsync(int page, int take)
+    {
+        return await _db.Programs.Skip(page * 10).Take(take).ToListAsync();
+    }
+
+    public async Task RemoveProgramAsync(Guid ProgramId)
+    {
+        await _db.Programs.Where(p => p.Id == ProgramId).ExecuteDeleteAsync();
+    }
 }

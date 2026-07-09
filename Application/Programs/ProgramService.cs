@@ -48,4 +48,28 @@ public class ProgramService(IProgramRepository _progRepo,
         await _currRepo.AddCurriculumAsync(curriculum);
         return curriculum.Id;
     }
+
+    public async Task ChangeProgramStatusAsync(ProgramStatus status, Guid ProgramId)
+    {
+        EdProgram? program = await _progRepo.GetProgramByGuidAsync(ProgramId)
+        ?? throw new ProgramDoesntExistException("No such program");
+        program.ProgramStatus = status;
+    }
+
+    public async Task<List<EdProgram>> GetProgramsPageAsync(int page, int take)
+    {
+        return await _progRepo.GetProgramsPageAsync(page, take);
+    }
+
+    public async Task RemoveProgramAsync(Guid ProgramId)
+    {
+        EdProgram edProgram = await _progRepo.GetProgramByGuidAsync(ProgramId)
+        ?? throw new ProgramDoesntExistException("No such program");
+        await _progRepo.RemoveProgramAsync(ProgramId);
+    }
+
+    public Task RemoveSubjectFromProgramAsync(Guid CurrId)
+    {
+        throw new NotImplementedException();
+    }
 }

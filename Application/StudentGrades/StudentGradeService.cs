@@ -20,8 +20,27 @@ public class StudentGradeService(IStudentGradeRepository _sgRepo,
         for (int i = 0; i < sgs.Count(); i++)
         {
             sgs[i].Grade = (int)bgDTO[i].Grade;
+            if (bgDTO[i].Grade >= 60)
+            {
+                sgs[i].Status = Status.Passed;
+                sgs[i].PassedDate = DateTime.UtcNow;
+            }
+            else
+            {
+                sgs[i].Status = Status.Failed;
+            }
         }
         await _sgRepo.PersistChangesAsync();
+    }
+
+    public async Task<List<StudentGrade>> GetGradesByCurriculumAsync(Guid CurrId)
+    {
+        return await _sgRepo.GetGradesByCurriculumAsync(CurrId);
+    }
+
+    public async Task<List<StudentGrade>> GetGradesByEducatorIdAsync(Guid UserId)
+    {
+        return await _sgRepo.GetGradesByEducatorIdAsync(UserId);
     }
 
     public async Task<List<StudentGrade>> GetStudentGradesAsync(Guid StudentId)

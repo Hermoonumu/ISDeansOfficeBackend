@@ -52,31 +52,31 @@ public class UserController(IUserService _userSvc,
         return Ok();
     }
 
-    [HttpPost("{UserId}/assignSubject/{SubjectId}")]
+    [HttpPost("{UserId}/assignCurriculum/{CurrId}")]
     [Authorize(Roles = "Dean,ViceDean")]
-    public async Task<IActionResult> AssignProfessorToSubject([FromRoute] Guid UserId,
-                                                                [FromRoute] Guid SubjectId)
+    public async Task<IActionResult> AssignProfessorToCurriculum([FromRoute] Guid UserId,
+                                                                [FromRoute] Guid CurrId)
     {
-        await _userSvc.AssignProfToSubjectAsync(UserId, SubjectId);
+        await _userSvc.AssignProfToCurriculumAsync(UserId, CurrId);
         return Ok();
     }
 
-    [HttpPost("{UserId}/dismiss/{SubjectId}")]
+    [HttpPost("{UserId}/dismiss/{Currid}")]
     [Authorize(Roles = "Dean,ViceDean")]
-    public async Task<IActionResult> DismissProfessorFromSubject([FromRoute] Guid UserId,
-                                                                [FromRoute] Guid SubjectId)
+    public async Task<IActionResult> DismissProfessorFromCurriculum([FromRoute] Guid UserId,
+                                                                [FromRoute] Guid CurrId)
     {
-        await _userSvc.DismissUserFromSubjectAsync(UserId, SubjectId);
+        await _userSvc.DismissUserFromCurriculumAsync(UserId, CurrId);
         return Ok();
     }
 
     [HttpGet("{UserId}/subjects")]
     [Authorize]
-    public async Task<IActionResult> GetAllProfSubjects([FromRoute] Guid UserId)
+    public async Task<IActionResult> GetAllProfCurricula([FromRoute] Guid UserId)
     {
-        List<Subject> subjects;
-        subjects = await _userSvc.GetSubjectsAssignedAsync(UserId);
-        return Ok(subjects);
+        List<Curriculum> curricula;
+        curricula = await _userSvc.GetCurriculaAssignedAsync(UserId);
+        return Ok(curricula);
     }
 
     [HttpGet("{UserId}")]

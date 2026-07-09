@@ -9,6 +9,21 @@ namespace DeanInfoSystem.Infrastructure.Repos;
 
 public class StudentGradeRepository(SystemDbContext _db) : IStudentGradeRepository
 {
+    public async Task<List<StudentGrade>> GetGradesByCurriculumAsync(Guid CurrId)
+    {
+        return await _db.Grades.Where(g => g.CurriculumId == CurrId).ToListAsync();
+    }
+
+    public async Task<List<StudentGrade>> GetGradesByEducatorIdAsync(Guid UserId)
+    {
+        return await _db.Grades
+        .Where(grade =>
+            _db.EducCurr.Any(ec =>
+                ec.UserId == UserId &&
+                ec.CurriculumId == grade.CurriculumId))
+        .ToListAsync();
+    }
+
     public async Task<StudentGrade?> GetStudentGradeByGuidAsync(Guid guid)
     {
         return await _db.Grades.Where(g => g.Id == guid).FirstOrDefaultAsync();

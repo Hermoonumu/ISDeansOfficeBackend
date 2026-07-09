@@ -94,13 +94,14 @@ public class AuthService(IUserRepository _userRepo,
         return tokens;
     }
 
-    public async Task<User?> AuthenticateUserAsync(string token)
+    public async Task<User> AuthenticateUserAsync(string token)
     {
         var handler = new JwtSecurityTokenHandler();
         var jwtSecurityToken = handler.ReadJwtToken(token);
         var claims = jwtSecurityToken.Claims;
         var UserId = claims.First(claim => claim.Type == "nameid").Value;
-        return await _userRepo.GetUserByGuidAsync(Guid.Parse(UserId));
+        return await _userRepo.GetUserByGuidAsync(Guid.Parse(UserId)) ??
+        throw new UserDoesntExistException("No such user");
     }
 
     public async Task ClearTokensAsync(string accessToken, string refreshToken)

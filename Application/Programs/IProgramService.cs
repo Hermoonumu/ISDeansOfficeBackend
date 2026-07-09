@@ -9,5 +9,8 @@ public interface IProgramService
 {
     public Task AddProgramAsync(NewProgramDTO npDTO);
     public Task<Guid> AssignSubjectToProgramAsync(Guid ProgramId, AddSubjectToProgramDTO astpDTO);
-    public Task<List<Subject>> GetAllSubjectsAsync(int page = 0, int take = 10);
+    public Task RemoveSubjectFromProgramAsync(Guid CurrId);
+    public Task ChangeProgramStatusAsync(ProgramStatus status, Guid ProgramId);
+    public Task<List<EdProgram>> GetProgramsPageAsync(int page, int take);
+    public Task RemoveProgramAsync(Guid ProgramId);
 }

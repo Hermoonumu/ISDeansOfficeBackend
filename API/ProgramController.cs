@@ -1,8 +1,9 @@
-using DeanInfoSystem.Application.Common.Exceptions;
 using DeanInfoSystem.Application.DTO;
 using DeanInfoSystem.Application.Programs;
+using DeanInfoSystem.Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
 
 namespace DeanInfoSystem.API;
 
@@ -12,12 +13,11 @@ namespace DeanInfoSystem.API;
 public class ProgramController(IProgramService _progSvc) : ControllerBase
 {
 
-    [Authorize(Policy = "DeanViceDean")]
+    [Authorize(Roles = "Dean,ViceDean")]
     [HttpPost]
     public async Task<IActionResult> NewProgram([FromBody] NewProgramDTO npDTO)
     {
         await _progSvc.AddProgramAsync(npDTO);
-
         return Created();
     }
 
@@ -31,11 +31,30 @@ public class ProgramController(IProgramService _progSvc) : ControllerBase
         return StatusCode(201, new { Id = guid.ToString() });
     }
 
-
-    [HttpGet]
-    [Authorize]
-    public async Task<IActionResult> GetPrograms()
+    [Authorize(Roles = "Dean,ViceDean")]
+    [HttpDelete("{ProgramId}")]
+    public async Task<IActionResult> RemoveSubject([FromRoute] Guid ProgramId)
     {
-        return StatusCode(500);
+        await _progSvc.RemoveProgramAsync(ProgramId);
+        return NoContent();
+    }
+
+
+    [Authorize(Roles = "Dean,ViceDean")]
+    [HttpPost("{ProgramId}/setStatus/{status}")]
+    public async Task<IActionResult> SetProgramStatus([FromRoute] Guid ProgramId,
+                                                    [FromRoute] ProgramStatus status)
+    {
+        await _progSvc.ChangeProgramStatusAsync(status, ProgramId);
+        return Ok();
+    }
+
+
+    [HttpGet("paginated")]
+    [Authorize]
+    public async Task<IActionResult> GetProgramsPaginated([FromQuery] int page,
+                                                            [FromQuery] int take)
+    {
+        return Ok(await _progSvc.GetProgramsPageAsync(page, take));
     }
 }

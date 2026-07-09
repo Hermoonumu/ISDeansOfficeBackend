@@ -1,5 +1,6 @@
 using DeanInfoSystem.Application.Common.Exceptions;
 using DeanInfoSystem.Application.Common.Mappers;
+using DeanInfoSystem.Application.Curricula;
 using DeanInfoSystem.Application.DTO;
 using DeanInfoSystem.Application.Subjects;
 using DeanInfoSystem.Domain;
@@ -10,7 +11,7 @@ namespace DeanInfoSystem.Application.Users;
 
 public class UserService(IUserRepository _userRepo,
                          IProfessorSubjectRepository _prsuRepo,
-                         ISubjectRepository _subjRepo) : IUserService
+                         ICurriculaRepository _currRepo) : IUserService
 {
     public async Task AddUserAsync(User user)
     {
@@ -23,29 +24,29 @@ public class UserService(IUserRepository _userRepo,
         await _userRepo.AddUserAsync(user);
     }
 
-    public async Task AssignProfToSubjectAsync(Guid UserId, Guid SubjId)
+    public async Task AssignProfToCurriculumAsync(Guid UserId, Guid CurrId)
     {
         User? user = await _userRepo.GetUserByGuidAsync(UserId) ??
         throw new UserDoesntExistException("No such user");
-        Subject? subject = await _subjRepo.GetSubjectByGuidAsync(SubjId) ??
+        Curriculum? curriculum = await _currRepo.GetCurriculumByIdAsync(CurrId) ??
         throw new SubjectDoesntExistException("No such subject");
         if (user.Position != Position.Educator)
             throw new PositionException("The user is not an educator");
-        if (await _prsuRepo.IsAlreadyAssigned(UserId, SubjId))
+        if (await _prsuRepo.IsAlreadyAssigned(UserId, CurrId))
             throw new UpdateFailedException("The user has this subject assigned already");
-        await _prsuRepo.AssignUserToSubjectAsync(UserId, SubjId);
+        await _prsuRepo.AssignUserToCurriculumAsync(UserId, CurrId);
     }
 
-    public async Task DismissUserFromSubjectAsync(Guid UserId, Guid SubjectId)
+    public async Task DismissUserFromCurriculumAsync(Guid UserId, Guid CurriculumId)
     {
         User? user = await _userRepo.GetUserByGuidAsync(UserId) ??
         throw new UserDoesntExistException("No such user");
-        Subject? subject = await _subjRepo.GetSubjectByGuidAsync(SubjectId) ??
+        Curriculum? curriculum = await _currRepo.GetCurriculumByIdAsync(CurriculumId) ??
         throw new SubjectDoesntExistException("No such subject");
         if (user.Position != Position.Educator)
             throw new PositionException("The user is not an educator");
-        if (await _prsuRepo.IsAlreadyAssigned(UserId, SubjectId))
-            await _prsuRepo.DismissUserFromSubjectAsync(UserId, SubjectId);
+        if (await _prsuRepo.IsAlreadyAssigned(UserId, CurriculumId))
+            await _prsuRepo.DismissUserFromCurriculumAsync(UserId, CurriculumId);
         throw new UpdateFailedException("The user is not assigned to this subject");
     }
 
@@ -61,11 +62,11 @@ public class UserService(IUserRepository _userRepo,
         return [.. users.Select(UserMapper.UserToDTO)];
     }
 
-    public async Task<List<Subject>> GetSubjectsAssignedAsync(Guid UserId)
+    public async Task<List<Curriculum>> GetCurriculaAssignedAsync(Guid UserId)
     {
         User? user = await _userRepo.GetUserByGuidAsync(UserId) ??
         throw new UserDoesntExistException("No such user");
-        return await _prsuRepo.GetSubjectsAssignedAsync(UserId);
+        return await _currRepo.GetCurriculaAssignedAsync(UserId);
     }
 
     public async Task<User?> GetUserByGuidAsync(Guid UserId)

@@ -41,7 +41,7 @@ public class GradesController(IStudentGradeService _sgSvc,
     [Authorize(Roles = "Student")]
     public async Task<IActionResult> GetOwnGrades()
     {
-        User user = await _authSvc.AuthenticateUserAsync(HttpContext.Request.Cookies["accessToken"]!);
+        User user = await _authSvc.AuthenticateUserAsync(HttpContext.Request.Cookies["AccessToken"]!);
         return Ok(await _sgSvc.GetStudentGradesAsync(user.Id));
     }
 
@@ -56,8 +56,8 @@ public class GradesController(IStudentGradeService _sgSvc,
     [Authorize(Roles = "Educator")]
     public async Task<IActionResult> MyStudentsGrades()
     {
-        User user = await _authSvc.AuthenticateUserAsync(HttpContext.Request.Cookies["accessToken"]!);
-        return Ok();
+        User user = await _authSvc.AuthenticateUserAsync(HttpContext.Request.Cookies["AccessToken"]!);
+        return Ok(await _sgSvc.GetGradesByEducatorIdAsync(user.Id));
 
     }
 }

@@ -54,6 +54,7 @@ public class ProgramService(IProgramRepository _progRepo,
         EdProgram? program = await _progRepo.GetProgramByGuidAsync(ProgramId)
         ?? throw new ProgramDoesntExistException("No such program");
         program.ProgramStatus = status;
+        await _progRepo.PersistChangesAsync();
     }
 
     public async Task<List<EdProgram>> GetProgramsPageAsync(int page, int take)

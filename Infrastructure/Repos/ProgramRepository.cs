@@ -25,6 +25,11 @@ public class ProgramRepository(SystemDbContext _db) : IProgramRepository
         return await _db.Programs.Skip(page * 10).Take(take).ToListAsync();
     }
 
+    public async Task PersistChangesAsync()
+    {
+        await _db.SaveChangesAsync();
+    }
+
     public async Task RemoveProgramAsync(Guid ProgramId)
     {
         await _db.Programs.Where(p => p.Id == ProgramId).ExecuteDeleteAsync();

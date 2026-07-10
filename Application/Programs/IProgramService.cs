@@ -13,4 +13,5 @@ public interface IProgramService
     public Task ChangeProgramStatusAsync(ProgramStatus status, Guid ProgramId);
     public Task<List<EdProgram>> GetProgramsPageAsync(int page, int take);
     public Task RemoveProgramAsync(Guid ProgramId);
+    public Task<List<Curriculum>> GetProgramCurriculaAsync(Guid? ProgramId);
 }

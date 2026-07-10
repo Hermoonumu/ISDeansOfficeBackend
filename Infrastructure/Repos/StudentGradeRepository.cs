@@ -17,6 +17,9 @@ public class StudentGradeRepository(SystemDbContext _db) : IStudentGradeReposito
     public async Task<List<StudentGrade>> GetGradesByEducatorIdAsync(Guid UserId)
     {
         return await _db.Grades
+        .Include(g => g.Student)
+        .Include(g => g.Curriculum)
+        .ThenInclude(c => c.Subject)
         .Where(grade =>
             _db.EducCurr.Any(ec =>
                 ec.UserId == UserId &&
@@ -54,5 +57,10 @@ public class StudentGradeRepository(SystemDbContext _db) : IStudentGradeReposito
     public async Task PersistChangesAsync()
     {
         await _db.SaveChangesAsync();
+    }
+
+    public async Task RemoveGradesRangeAsync(List<Guid> sgIds)
+    {
+        await _db.Grades.Where(g => sgIds.Contains(g.Id)).ExecuteDeleteAsync();
     }
 }

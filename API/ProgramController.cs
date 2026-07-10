@@ -1,3 +1,4 @@
+using DeanInfoSystem.Application.Common.Auth;
 using DeanInfoSystem.Application.DTO;
 using DeanInfoSystem.Application.Programs;
 using DeanInfoSystem.Domain;
@@ -10,7 +11,8 @@ namespace DeanInfoSystem.API;
 
 [ApiController]
 [Route("/api/programs")]
-public class ProgramController(IProgramService _progSvc) : ControllerBase
+public class ProgramController(IProgramService _progSvc,
+                                IAuthService _authSvc) : ControllerBase
 {
 
     [Authorize(Roles = "Dean,ViceDean")]
@@ -47,6 +49,14 @@ public class ProgramController(IProgramService _progSvc) : ControllerBase
     {
         await _progSvc.ChangeProgramStatusAsync(status, ProgramId);
         return Ok();
+    }
+
+    [HttpPost("MySyllabus")]
+    [Authorize(Roles = "Student")]
+    public async Task<IActionResult> GetSyllabus()
+    {
+        User user = await _authSvc.AuthenticateUserAsync(HttpContext.Request.Cookies["AccessToken"]!);
+        return Ok(await _progSvc.GetProgramCurriculaAsync(user.ProgramId));
     }
 
 

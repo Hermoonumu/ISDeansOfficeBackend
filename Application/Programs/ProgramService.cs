@@ -77,4 +77,10 @@ public class ProgramService(IProgramRepository _progRepo,
     {
         await _currRepo.RemoveCurriculumAsync(CurrId);
     }
+
+    public async Task<List<Curriculum>> GetProgramCurriculaAsync(Guid? ProgramId)
+    {
+        if (ProgramId is null) throw new PositionException("The student isn't enrolled in any program");
+        return await _currRepo.GetAllCurriculaByProgramAsync((Guid)ProgramId);
+    }
 }

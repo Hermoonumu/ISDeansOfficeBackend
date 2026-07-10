@@ -46,6 +46,20 @@ public class EnrollmentService(IProgramRepository _progRepo,
         await _sgRepo.InstantiateGradesRangeAsync(sgs);
     }
 
+    public async Task UnenrollStudentAsync(Guid StudentId)
+    {
+        User? user = await _userRepo.GetUserByGuidAsync(StudentId)
+        ?? throw new UserDoesntExistException("No such user");
+
+        if (user.Position != Position.Student)
+            throw new UpdateFailedException("Can't unenroll anything but student");
+        List<Guid> sgIds = [.. (await _sgRepo.GetStudentGradesAsync(user.Id)).Select(e => e.Id)];
+        await _sgRepo.RemoveGradesRangeAsync(sgIds);
+
+        user.ProgramId = null;
+        await _userRepo.PersistChangesAsync();
+    }
+
     public async Task UpdateStudentGradesOnNewCurriculumAsync(Guid NewCurriculumId)
     {
         Curriculum curr = await _currRepo.GetCurriculumByIdAsync(NewCurriculumId);

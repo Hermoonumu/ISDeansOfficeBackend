@@ -52,6 +52,14 @@ public class UserController(IUserService _userSvc,
         return Ok();
     }
 
+    [HttpPost("{UserId}/unenroll")]
+    [Authorize(Roles = "Dean,ViceDean,Secretary")]
+    public async Task<IActionResult> UnenrollStudent([FromRoute] Guid UserId)
+    {
+        await _enrollSvc.UnenrollStudentAsync(UserId);
+        return Ok();
+    }
+
     [HttpPost("{UserId}/assignCurriculum/{CurrId}")]
     [Authorize(Roles = "Dean,ViceDean")]
     public async Task<IActionResult> AssignProfessorToCurriculum([FromRoute] Guid UserId,

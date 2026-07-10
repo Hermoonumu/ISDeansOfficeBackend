@@ -25,7 +25,7 @@ public class SystemDbContext : DbContext
             .HasForeignKey(e => e.ProgramId)
             .OnDelete(DeleteBehavior.Restrict);
 
-            u.Property<uint>("ver").IsRowVersion();
+            u.Property<uint>("ver").IsConcurrencyToken();
         });
 
 
@@ -37,7 +37,7 @@ public class SystemDbContext : DbContext
             .WithMany()
             .OnDelete(DeleteBehavior.SetNull);
 
-            p.Property<uint>("ver").IsRowVersion();
+            p.Property<uint>("ver").IsConcurrencyToken();
         });
 
 
@@ -46,7 +46,7 @@ public class SystemDbContext : DbContext
             s.HasKey(e => e.Id);
             s.HasIndex(e => e.SubjectName).IsUnique();
 
-            s.Property<uint>("ver").IsRowVersion();
+            s.Property<uint>("ver").IsConcurrencyToken();
         });
 
 
@@ -55,7 +55,7 @@ public class SystemDbContext : DbContext
             d.HasKey(e => e.Id);
             d.HasIndex(e => e.DepartmentName).IsUnique();
 
-            d.Property<uint>("ver").IsRowVersion();
+            d.Property<uint>("ver").IsConcurrencyToken();
         });
 
 
@@ -71,7 +71,7 @@ public class SystemDbContext : DbContext
             .WithMany()
             .OnDelete(DeleteBehavior.Restrict);
 
-            c.Property<uint>("ver").IsRowVersion();
+            c.Property<uint>("ver").IsConcurrencyToken();
         });
 
 
@@ -87,7 +87,7 @@ public class SystemDbContext : DbContext
             .WithMany()
             .OnDelete(DeleteBehavior.Cascade);
 
-            sg.Property<uint>("ver").IsRowVersion();
+            sg.Property<uint>("ver").IsConcurrencyToken();
         });
 
 

@@ -1,7 +1,9 @@
 using DeanInfoSystem.Application.Common.Auth;
+using DeanInfoSystem.Application.Common.Mappers;
 using DeanInfoSystem.Application.DTO;
 using DeanInfoSystem.Application.StudentGrades;
 using DeanInfoSystem.Domain;
+using DeanInfoSystem.Infrastructure.Repos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,7 +38,7 @@ public class GradesController(IStudentGradeService _sgSvc,
     [Authorize(Roles = "Dean,ViceDean,Educator,Secretary")]
     public async Task<IActionResult> GetStudentGrades([FromRoute] Guid StudentId)
     {
-        return Ok(await _sgSvc.GetStudentGradesAsync(StudentId));
+        return Ok((await _sgSvc.GetStudentGradesAsync(StudentId)).Select(StudentGradeMapper.SGToDTO));
     }
 
     [HttpGet("MyGrades")]
@@ -51,7 +53,8 @@ public class GradesController(IStudentGradeService _sgSvc,
     [Authorize(Roles = "Dean,ViceDean,Educator")]
     public async Task<IActionResult> GetGradesByCurriculum([FromRoute] Guid CurrId)
     {
-        return Ok(await _sgSvc.GetGradesByCurriculumAsync(CurrId));
+        User user = await _authSvc.AuthenticateUserAsync(HttpContext.Request.Cookies["AccessToken"]!);
+        return Ok(await _sgSvc.GetGradesByCurriculumAsync(user, CurrId));
     }
 
     [HttpGet("MyStudentsGrades")]

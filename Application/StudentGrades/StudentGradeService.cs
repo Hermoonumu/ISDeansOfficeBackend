@@ -38,8 +38,15 @@ public class StudentGradeService(IStudentGradeRepository _sgRepo,
         await _sgRepo.PersistChangesAsync();
     }
 
-    public async Task<List<StudentGrade>> GetGradesByCurriculumAsync(Guid CurrId)
+    public async Task<List<StudentGrade>> GetGradesByCurriculumAsync(User user, Guid CurrId)
     {
+        if (user.Position != Position.Dean)
+        {
+            if (!await _edcuRepo.IsAlreadyAssigned(user.Id, CurrId))
+            {
+                throw new PositionException("The user is not authorized to access the grades of this curriculum");
+            }
+        }
         return await _sgRepo.GetGradesByCurriculumAsync(CurrId);
     }
 

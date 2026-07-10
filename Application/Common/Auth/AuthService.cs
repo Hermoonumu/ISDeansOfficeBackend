@@ -8,17 +8,17 @@ using DeanInfoSystem.Application.Common.Auth;
 using DeanInfoSystem.Application.Common.Caching;
 using DeanInfoSystem.Application.Common.Exceptions;
 using DeanInfoSystem.Application.Common.Mappers;
+using DeanInfoSystem.Application.Common.UoW;
 using DeanInfoSystem.Application.DTO;
 using DeanInfoSystem.Application.Users;
 using DeanInfoSystem.Domain;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Npgsql;
 
 public class AuthService(IUserRepository _userRepo,
                             IConfiguration _conf,
-                            ICacheService _redis) : IAuthService
+                            ICacheService _redis,
+                            IUnitOfWork _uow) : IAuthService
 {
     public async Task<Dictionary<string, string>> RegisterAsync(NewUserDTO nuDTO, Position? position = null)
     {
@@ -27,7 +27,10 @@ public class AuthService(IUserRepository _userRepo,
         user.PasswordHash = passwordHasher.HashPassword(user, nuDTO.Password == String.Empty ? nuDTO.Username : nuDTO.Password);
         if (position is not null) user.Position = (Position)position;
         if (await _userRepo.IsUsernameTaken(nuDTO.Username)) throw new UserAlreadyExistsException("This user already exists");
+        using var tr = await _uow.BeginTransactionAsync();
         await _userRepo.AddUserAsync(user);
+        await _uow.SaveChangesAsync();
+        tr.Commit();
         return await GenerateTokensAsync(user);
 
     }

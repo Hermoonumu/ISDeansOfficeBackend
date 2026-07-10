@@ -6,7 +6,6 @@ public class DepartmentRepository(SystemDbContext _db) : IDepartmentRepository
     public async Task AddDepartmentAsync(Department dept)
     {
         await _db.Departments.AddAsync(dept);
-        await _db.SaveChangesAsync();
     }
 
     public async Task<Department?> GetDepartmentByGuidAsync(Guid guid)
@@ -17,11 +16,6 @@ public class DepartmentRepository(SystemDbContext _db) : IDepartmentRepository
     public async Task<List<Department>> GetDepartmentsAsync()
     {
         return await _db.Departments.ToListAsync();
-    }
-
-    public async Task PersistChangesAsync()
-    {
-        await _db.SaveChangesAsync();
     }
 
     public async Task RemoveDepartmentAsync(Department department)

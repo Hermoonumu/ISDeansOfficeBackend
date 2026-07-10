@@ -10,7 +10,6 @@ public class UserRepository(SystemDbContext _db) : IUserRepository
     public async Task AddUserAsync(User user)
     {
         await _db.Users.AddAsync(user);
-        await _db.SaveChangesAsync();
     }
 
     public async Task<User?> GetUserByGuidAsync(Guid guid)
@@ -38,11 +37,6 @@ public class UserRepository(SystemDbContext _db) : IUserRepository
         User? user = await _db.Users.Where(u => u.Username == username).FirstOrDefaultAsync();
         if (user is null) return false;
         return true;
-    }
-
-    public async Task PersistChangesAsync()
-    {
-        await _db.SaveChangesAsync();
     }
 
     public async Task<List<User>> GetAllUsersPageAsync(int page, int take)

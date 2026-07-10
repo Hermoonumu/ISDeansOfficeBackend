@@ -1,6 +1,7 @@
 using DeanInfoSystem.Application.Common.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
 namespace DeanInfoSystem.Application.Common.Handlers;
 
@@ -39,7 +40,7 @@ public class GlobalExceptionHandler(IProblemDetailsService prDeService) : IExcep
             {
                 Type = exception.GetType().Name,
                 Title = "An error has occurred",
-                Detail = exception.Message
+                Detail = exception.Message + "\n" + exception.StackTrace
             }
         });
 

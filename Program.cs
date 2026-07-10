@@ -2,6 +2,7 @@ using System.Text;
 using DeanInfoSystem.Application.Common.Auth;
 using DeanInfoSystem.Application.Common.Caching;
 using DeanInfoSystem.Application.Common.Handlers;
+using DeanInfoSystem.Application.Common.UoW;
 using DeanInfoSystem.Application.Curricula;
 using DeanInfoSystem.Application.Enrollment;
 using DeanInfoSystem.Application.Programs;
@@ -43,6 +44,7 @@ builder.Services.AddOpenApi();
 //DB connect (postgres db)
 builder.Services.AddDbContext<SystemDbContext>(options =>
     options.UseNpgsql(builder.Configuration["ConnectionStrings:PostgreSQL"]));
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 
 //Cache connect (redis cache)
@@ -98,7 +100,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 ValidIssuer = builder.Configuration["API:Issuer"],
                 ValidateAudience = true,
                 ValidAudience = builder.Configuration["API:Audience"],
-                ClockSkew = TimeSpan.FromMinutes(5)
+                ClockSkew = TimeSpan.FromMinutes(2)
             };
             conf.Events = new JwtBearerEvents
             {

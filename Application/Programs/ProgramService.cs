@@ -1,4 +1,6 @@
+using System.Transactions;
 using DeanInfoSystem.Application.Common.Exceptions;
+using DeanInfoSystem.Application.Common.UoW;
 using DeanInfoSystem.Application.Curricula;
 using DeanInfoSystem.Application.DTO;
 using DeanInfoSystem.Application.Enrollment;
@@ -13,12 +15,14 @@ namespace DeanInfoSystem.Application.Programs;
 public class ProgramService(IProgramRepository _progRepo,
                             IDepartmentRepository _deptRepo,
                             ICurriculaRepository _currRepo,
-                            IEnrollmentService _enrSvc) : IProgramService
+                            IEnrollmentService _enrSvc,
+                            IUnitOfWork _uow) : IProgramService
 {
     public async Task AddProgramAsync(NewProgramDTO npDTO)
     {
         Department? department = await _deptRepo.GetDepartmentByGuidAsync(Guid.Parse(npDTO.DepartmentId)) ??
         throw new DepartmentDoesntExistException("No such department");
+        var tr = await _uow.BeginTransactionAsync();
         await _progRepo.AddProgramAsync(
             new EdProgram()
             {
@@ -28,6 +32,8 @@ public class ProgramService(IProgramRepository _progRepo,
                 ProgramStatus = ProgramStatus.Drafted
             }
         );
+        await _uow.SaveChangesAsync();
+        tr.Commit();
     }
 
     public async Task<Guid> AssignSubjectToProgramAsync(Guid ProgramId,
@@ -47,9 +53,12 @@ public class ProgramService(IProgramRepository _progRepo,
             CourseWorkHours = astpDTO.CourseWorkHours,
             AssessmentType = astpDTO.AssessmentType
         };
-
+        using var tr = await _uow.BeginTransactionAsync();
         await _currRepo.AddCurriculumAsync(curriculum);
+        await _uow.SaveChangesAsync();
         await _enrSvc.UpdateStudentGradesOnNewCurriculumAsync(curriculum.Id);
+        await _uow.SaveChangesAsync();
+        tr.Commit();
         return curriculum.Id;
     }
 
@@ -57,8 +66,10 @@ public class ProgramService(IProgramRepository _progRepo,
     {
         EdProgram? program = await _progRepo.GetProgramByGuidAsync(ProgramId)
         ?? throw new ProgramDoesntExistException("No such program");
+        using var tr = await _uow.BeginTransactionAsync();
         program.ProgramStatus = status;
-        await _progRepo.PersistChangesAsync();
+        await _uow.SaveChangesAsync();
+        tr.Commit();
     }
 
     public async Task<List<EdProgram>> GetProgramsPageAsync(int page, int take)

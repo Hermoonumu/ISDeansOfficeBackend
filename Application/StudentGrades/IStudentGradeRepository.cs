@@ -9,7 +9,6 @@ public interface IStudentGradeRepository
     public Task InstantiateGradesRangeAsync(List<StudentGrade> sgs);
     public Task<StudentGrade?> GetStudentGradeByGuidAsync(Guid guid);
     public Task<List<StudentGrade>> GetStudentGradeRangeAsync(List<Guid> sgIds);
-    public Task PersistChangesAsync();
     public Task<List<StudentGrade>> GetStudentGradesAsync(Guid StudentId);
     public Task<List<StudentGrade>> GetGradesByCurriculumAsync(Guid CurrId);
     public Task<List<StudentGrade>> GetGradesByEducatorIdAsync(Guid UserId);

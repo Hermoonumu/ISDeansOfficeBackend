@@ -12,7 +12,6 @@ public class ProgramRepository(SystemDbContext _db) : IProgramRepository
     public async Task AddProgramAsync(EdProgram program)
     {
         await _db.Programs.AddAsync(program);
-        await _db.SaveChangesAsync();
     }
 
     public async Task<EdProgram?> GetProgramByGuidAsync(Guid guid)
@@ -25,10 +24,6 @@ public class ProgramRepository(SystemDbContext _db) : IProgramRepository
         return await _db.Programs.Skip(page * 10).Take(take).ToListAsync();
     }
 
-    public async Task PersistChangesAsync()
-    {
-        await _db.SaveChangesAsync();
-    }
 
     public async Task RemoveProgramAsync(Guid ProgramId)
     {

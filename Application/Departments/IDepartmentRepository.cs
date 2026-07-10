@@ -6,5 +6,4 @@ public interface IDepartmentRepository
     public Task<List<Department>> GetDepartmentsAsync();
     public Task<Department?> GetDepartmentByGuidAsync(Guid guid);
     public Task RemoveDepartmentAsync(Department department);
-    public Task PersistChangesAsync();
 }

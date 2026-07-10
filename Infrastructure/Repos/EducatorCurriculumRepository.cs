@@ -14,7 +14,6 @@ public class EducatorCurriculumRepository(SystemDbContext _db) : IEducatorCurric
             UserId = UserId,
             CurriculumId = CurriculumId
         });
-        await _db.SaveChangesAsync();
     }
 
     public async Task DismissUserFromCurriculumAsync(Guid UserId, Guid CurriculumId)

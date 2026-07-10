@@ -1,7 +1,8 @@
 namespace DeanInfoSystem.Application.Enrollment;
 
-
+using System.Transactions;
 using DeanInfoSystem.Application.Common.Exceptions;
+using DeanInfoSystem.Application.Common.UoW;
 using DeanInfoSystem.Application.Curricula;
 using DeanInfoSystem.Application.Programs;
 using DeanInfoSystem.Application.StudentGrades;
@@ -11,7 +12,8 @@ using DeanInfoSystem.Domain;
 public class EnrollmentService(IProgramRepository _progRepo,
                             ICurriculaRepository _currRepo,
                             IUserRepository _userRepo,
-                            IStudentGradeRepository _sgRepo) : IEnrollmentService
+                            IStudentGradeRepository _sgRepo,
+                            IUnitOfWork _uow) : IEnrollmentService
 {
     public async Task EnrollStudentIntoProgramAsync(Guid StudentId, Guid ProgramId)
     {
@@ -30,8 +32,6 @@ public class EnrollmentService(IProgramRepository _progRepo,
             throw new EnrollmentException("This student is already enrolled in a program");
 
         student.ProgramId = ProgramId;
-        await _userRepo.PersistChangesAsync();
-
         List<Curriculum> curricula = await _currRepo.GetAllCurriculaByProgramAsync(ProgramId);
         List<StudentGrade> sgs = [];
         foreach (Curriculum curr in curricula)
@@ -43,7 +43,10 @@ public class EnrollmentService(IProgramRepository _progRepo,
                 CurriculumId = curr.Id
             });
         }
+        using var tr = await _uow.BeginTransactionAsync();
         await _sgRepo.InstantiateGradesRangeAsync(sgs);
+        await _uow.SaveChangesAsync();
+        tr.Commit();
     }
 
     public async Task UnenrollStudentAsync(Guid StudentId)
@@ -54,10 +57,12 @@ public class EnrollmentService(IProgramRepository _progRepo,
         if (user.Position != Position.Student)
             throw new UpdateFailedException("Can't unenroll anything but student");
         List<Guid> sgIds = [.. (await _sgRepo.GetStudentGradesAsync(user.Id)).Select(e => e.Id)];
-        await _sgRepo.RemoveGradesRangeAsync(sgIds);
 
+        using var tr = await _uow.BeginTransactionAsync();
+        await _sgRepo.RemoveGradesRangeAsync(sgIds);
         user.ProgramId = null;
-        await _userRepo.PersistChangesAsync();
+        await _uow.SaveChangesAsync();
+        tr.Commit();
     }
 
     public async Task UpdateStudentGradesOnNewCurriculumAsync(Guid NewCurriculumId)
@@ -75,6 +80,18 @@ public class EnrollmentService(IProgramRepository _progRepo,
                 CurriculumId = NewCurriculumId,
             });
         }
-        await _sgRepo.InstantiateGradesRangeAsync(sgs);
+
+        if (_uow.IsTransaction())
+        {
+            using var tr = await _uow.BeginTransactionAsync();
+            await _sgRepo.InstantiateGradesRangeAsync(sgs);
+            await _uow.SaveChangesAsync();
+            tr.Commit();
+        }
+        else
+        {
+            await _sgRepo.InstantiateGradesRangeAsync(sgs);
+        }
+
     }
 }

@@ -1,8 +1,9 @@
+using System.Transactions;
 using DeanInfoSystem.Application.Common.Exceptions;
 using DeanInfoSystem.Application.Common.Mappers;
+using DeanInfoSystem.Application.Common.UoW;
 using DeanInfoSystem.Application.Curricula;
 using DeanInfoSystem.Application.DTO;
-using DeanInfoSystem.Application.Subjects;
 using DeanInfoSystem.Domain;
 using Microsoft.AspNetCore.JsonPatch.SystemTextJson;
 
@@ -11,17 +12,22 @@ namespace DeanInfoSystem.Application.Users;
 
 public class UserService(IUserRepository _userRepo,
                          IEducatorCurriculumRepository _prsuRepo,
-                         ICurriculaRepository _currRepo) : IUserService
+                         ICurriculaRepository _currRepo,
+                         IUnitOfWork _uow) : IUserService
 {
     public async Task AddUserAsync(User user)
     {
+        using var transaction = await _uow.BeginTransactionAsync();
         await _userRepo.AddUserAsync(user);
+        transaction.Commit();
     }
 
     public async Task AddUserAsync(NewUserDTO nuDTO)
     {
         User user = UserMapper.DTOToUser(nuDTO);
+        using var transaction = await _uow.BeginTransactionAsync();
         await _userRepo.AddUserAsync(user);
+        transaction.Commit();
     }
 
     public async Task AssignProfToCurriculumAsync(Guid UserId, Guid CurrId)
@@ -34,7 +40,10 @@ public class UserService(IUserRepository _userRepo,
             throw new PositionException("The user is not an educator");
         if (await _prsuRepo.IsAlreadyAssigned(UserId, CurrId))
             throw new UpdateFailedException("The user has this subject assigned already");
+        using var tr = await _uow.BeginTransactionAsync();
         await _prsuRepo.AssignUserToCurriculumAsync(UserId, CurrId);
+        await _uow.SaveChangesAsync();
+        tr.Commit();
     }
 
     public async Task DismissUserFromCurriculumAsync(Guid UserId, Guid CurriculumId)
@@ -45,9 +54,17 @@ public class UserService(IUserRepository _userRepo,
         throw new SubjectDoesntExistException("No such subject");
         if (user.Position != Position.Educator)
             throw new PositionException("The user is not an educator");
+        using var tr = await _uow.BeginTransactionAsync();
         if (await _prsuRepo.IsAlreadyAssigned(UserId, CurriculumId))
+        {
             await _prsuRepo.DismissUserFromCurriculumAsync(UserId, CurriculumId);
+            await _uow.SaveChangesAsync();
+            tr.Commit();
+            return;
+        }
+        tr.Rollback();
         throw new UpdateFailedException("The user is not assigned to this subject");
+
     }
 
     public async Task<List<UserDTO>> GetAllUsersByPositionPageAsync(Position pos, int page, int take)
@@ -88,14 +105,17 @@ public class UserService(IUserRepository _userRepo,
             BirthDate = user.BirthDate,
             ProgramId = user.ProgramId
         };
-        Patch.ApplyTo(bfPatch, (err) =>
+        using var tr = await _uow.BeginTransactionAsync();
+        Patch.ApplyTo(bfPatch, async (err) =>
         {
+            tr.Rollback();
             throw new UpdateFailedException($"User update failed.\nAmended object: {err.AffectedObject.GetType()}\nError msg: {err.ErrorMessage}");
         });
         user.FirstName = bfPatch.FirstName; user.LastName = bfPatch.LastName;
         user.Username = bfPatch.Username; user.Position = bfPatch.Position;
         user.BirthDate = bfPatch.BirthDate; user.ProgramId = bfPatch.ProgramId;
-        await _userRepo.PersistChangesAsync();
+        await _uow.SaveChangesAsync();
+        tr.Commit();
     }
 
     public async Task RemoveUserAsync(Guid guid)

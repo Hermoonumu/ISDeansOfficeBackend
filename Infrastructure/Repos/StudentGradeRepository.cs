@@ -45,18 +45,11 @@ public class StudentGradeRepository(SystemDbContext _db) : IStudentGradeReposito
     public async Task InstantiateGradeAsync(StudentGrade sg)
     {
         await _db.Grades.AddAsync(sg);
-        await _db.SaveChangesAsync();
     }
 
     public async Task InstantiateGradesRangeAsync(List<StudentGrade> sgs)
     {
         await _db.Grades.AddRangeAsync(sgs);
-        await _db.SaveChangesAsync();
-    }
-
-    public async Task PersistChangesAsync()
-    {
-        await _db.SaveChangesAsync();
     }
 
     public async Task RemoveGradesRangeAsync(List<Guid> sgIds)

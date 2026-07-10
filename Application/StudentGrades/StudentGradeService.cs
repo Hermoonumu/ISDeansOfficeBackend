@@ -1,4 +1,6 @@
+using System.Transactions;
 using DeanInfoSystem.Application.Common.Exceptions;
+using DeanInfoSystem.Application.Common.UoW;
 using DeanInfoSystem.Application.DTO;
 using DeanInfoSystem.Application.Users;
 using DeanInfoSystem.Domain;
@@ -8,7 +10,8 @@ namespace DeanInfoSystem.Application.StudentGrades;
 
 public class StudentGradeService(IStudentGradeRepository _sgRepo,
                                 IUserService _usrSvc,
-                                IEducatorCurriculumRepository _edcuRepo) : IStudentGradeService
+                                IEducatorCurriculumRepository _edcuRepo,
+                                IUnitOfWork _uow) : IStudentGradeService
 {
     public async Task BulkGradeAsync(User user, List<BulkGradeDTO> bgDTO)
     {
@@ -22,6 +25,7 @@ public class StudentGradeService(IStudentGradeRepository _sgRepo,
                 throw new PositionException("The user is not authorized to grade some of the curricula");
             }
         }
+        using var tr = await _uow.BeginTransactionAsync();
         for (int i = 0; i < sgs.Count(); i++)
         {
             sgs[i].Grade = (int)bgDTO[i].Grade;
@@ -35,7 +39,8 @@ public class StudentGradeService(IStudentGradeRepository _sgRepo,
                 sgs[i].Status = Status.Failed;
             }
         }
-        await _sgRepo.PersistChangesAsync();
+        await _uow.SaveChangesAsync();
+        tr.Commit();
     }
 
     public async Task<List<StudentGrade>> GetGradesByCurriculumAsync(User user, Guid CurrId)
@@ -80,14 +85,14 @@ public class StudentGradeService(IStudentGradeRepository _sgRepo,
         }
 
         sg.Grade = (int)grade;
-
+        using var tr = await _uow.BeginTransactionAsync();
         if (grade < 60) sg.Status = Status.Failed;
         else
         {
             sg.Status = Status.Passed;
             sg.PassedDate = DateTime.UtcNow;
         }
-
-        await _sgRepo.PersistChangesAsync();
+        await _uow.SaveChangesAsync();
+        tr.Commit();
     }
 }

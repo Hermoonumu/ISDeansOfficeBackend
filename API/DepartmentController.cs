@@ -1,6 +1,5 @@
 namespace DeanInfoSystem.API;
 
-using DeanInfoSystem.Application.Common.Exceptions;
 using DeanInfoSystem.Application.DTO;
 using DeanInfoSystem.Domain;
 using Microsoft.AspNetCore.Authorization;

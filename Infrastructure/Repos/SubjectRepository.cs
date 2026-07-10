@@ -11,7 +11,6 @@ public class SubjectRepository(SystemDbContext _db) : ISubjectRepository
     public async Task AddSubjectAsync(Subject subject)
     {
         await _db.Subjects.AddAsync(subject);
-        await _db.SaveChangesAsync();
     }
 
     public async Task<List<Subject>> GetAllSubjectsAsync()
@@ -36,11 +35,6 @@ public class SubjectRepository(SystemDbContext _db) : ISubjectRepository
         Subject? subject = await _db.Subjects.Where(s => s.SubjectName == name).FirstOrDefaultAsync();
         if (subject is null) return false;
         return true;
-    }
-
-    public async Task PersistChangesAsync()
-    {
-        await _db.SaveChangesAsync();
     }
 
     public async Task RemoveSubjectAsync(Guid guid)

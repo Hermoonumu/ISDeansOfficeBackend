@@ -69,7 +69,7 @@ builder.Services.AddScoped<IProgramRepository, ProgramRepository>();
 builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
 builder.Services.AddScoped<ICurriculaRepository, CurriculaRepository>();
 builder.Services.AddScoped<IStudentGradeRepository, StudentGradeRepository>();
-builder.Services.AddScoped<IProfessorSubjectRepository, ProfessorSubjectRepository>();
+builder.Services.AddScoped<IEducatorCurriculumRepository, EducatorCurriculumRepository>();
 
 
 //Controllers

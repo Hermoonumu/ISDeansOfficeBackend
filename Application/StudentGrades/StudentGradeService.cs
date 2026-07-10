@@ -7,15 +7,20 @@ namespace DeanInfoSystem.Application.StudentGrades;
 
 
 public class StudentGradeService(IStudentGradeRepository _sgRepo,
-                                IUserService _usrSvc) : IStudentGradeService
+                                IUserService _usrSvc,
+                                IEducatorCurriculumRepository _edcuRepo) : IStudentGradeService
 {
-    public async Task BulkGradeAsync(List<BulkGradeDTO> bgDTO)
+    public async Task BulkGradeAsync(User user, List<BulkGradeDTO> bgDTO)
     {
-        List<StudentGrade> sgs = [];
-        foreach (BulkGradeDTO g in bgDTO)
+        List<StudentGrade> sgs = await _sgRepo.GetStudentGradeRangeAsync([.. bgDTO.Select(e => e.GradeCardId)]);
+
+
+        if (user.Position != Position.Dean)
         {
-            sgs.Add(await _sgRepo.GetStudentGradeByGuidAsync(g.GradeCardId) ??
-            throw new GradeDoesntExistException($"No such grade (ID: {g.GradeCardId})"));
+            if ((await _edcuRepo.IsAlreadyAssignedRangeAsync(user.Id, [.. sgs.Select(e => (Guid)e.CurriculumId)])).Any(e => e == false))
+            {
+                throw new PositionException("The user is not authorized to grade some of the curricula");
+            }
         }
         for (int i = 0; i < sgs.Count(); i++)
         {
@@ -54,10 +59,18 @@ public class StudentGradeService(IStudentGradeRepository _sgRepo,
         return await _sgRepo.GetStudentGradesAsync(StudentId);
     }
 
-    public async Task GradeAsync(Guid cardId, uint grade)
+    public async Task GradeAsync(User user, Guid cardId, uint grade)
     {
         StudentGrade? sg = await _sgRepo.GetStudentGradeByGuidAsync(cardId)
         ?? throw new GradeDoesntExistException("No such grade");
+
+        if (user.Position != Position.Dean)
+        {
+            if (!await _edcuRepo.IsAlreadyAssigned(user.Id, (Guid)sg.CurriculumId!))
+            {
+                throw new PositionException("The user is not authorized to grade this curriculum");
+            }
+        }
 
         sg.Grade = (int)grade;
 

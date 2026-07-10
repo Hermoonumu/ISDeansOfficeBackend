@@ -10,7 +10,7 @@ namespace DeanInfoSystem.Application.Users;
 
 
 public class UserService(IUserRepository _userRepo,
-                         IProfessorSubjectRepository _prsuRepo,
+                         IEducatorCurriculumRepository _prsuRepo,
                          ICurriculaRepository _currRepo) : IUserService
 {
     public async Task AddUserAsync(User user)

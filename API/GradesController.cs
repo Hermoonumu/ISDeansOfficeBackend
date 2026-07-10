@@ -15,18 +15,20 @@ public class GradesController(IStudentGradeService _sgSvc,
                             IAuthService _authSvc) : ControllerBase
 {
     [HttpPost("{GradeId}")]
-    [Authorize(Roles = "Educator,Assistant,EducationalAdvisor")]
+    [Authorize(Roles = "Educator,Dean,ViceDean")]
     public async Task<IActionResult> Grade([FromBody] GradeDTO gDTO, [FromRoute] Guid GradeId)
     {
-        await _sgSvc.GradeAsync(GradeId, gDTO.Grade);
+        User user = await _authSvc.AuthenticateUserAsync(HttpContext.Request.Cookies["AccessToken"]!);
+        await _sgSvc.GradeAsync(user, GradeId, gDTO.Grade);
         return Ok();
     }
 
     [HttpPost("bulkGrade")]
-    [Authorize(Roles = "Educator,Assistant,EducationalAdvisor")]
+    [Authorize(Roles = "Educator,Dean,ViceDean")]
     public async Task<IActionResult> Grade([FromBody] List<BulkGradeDTO> bgDTO)
     {
-        await _sgSvc.BulkGradeAsync(bgDTO);
+        User user = await _authSvc.AuthenticateUserAsync(HttpContext.Request.Cookies["AccessToken"]!);
+        await _sgSvc.BulkGradeAsync(user, bgDTO);
         return Ok();
     }
 

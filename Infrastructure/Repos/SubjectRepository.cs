@@ -20,7 +20,7 @@ public class SubjectRepository(SystemDbContext _db) : ISubjectRepository
 
     public async Task<List<Subject>> GetAllSubjectsPageAsync(int page, int take)
     {
-        return await _db.Subjects.Skip(page * 10)
+        return await _db.Subjects.Skip(page * take)
                                     .Take(take)
                                     .ToListAsync();
     }

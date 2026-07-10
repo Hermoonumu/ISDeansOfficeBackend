@@ -40,7 +40,7 @@ public class StudentGradeService(IStudentGradeRepository _sgRepo,
             }
         }
         await _uow.SaveChangesAsync();
-        tr.Commit();
+        await _uow.CommitTransactionAsync();
     }
 
     public async Task<List<StudentGrade>> GetGradesByCurriculumAsync(User user, Guid CurrId)
@@ -93,6 +93,6 @@ public class StudentGradeService(IStudentGradeRepository _sgRepo,
             sg.PassedDate = DateTime.UtcNow;
         }
         await _uow.SaveChangesAsync();
-        tr.Commit();
+        await _uow.CommitTransactionAsync();
     }
 }

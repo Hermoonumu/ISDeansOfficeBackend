@@ -7,10 +7,10 @@ namespace DeanInfoSystem.Application.Common.UoW;
 
 public class UnitOfWork(SystemDbContext _db) : IUnitOfWork
 {
-    public async Task<IDbTransaction> BeginTransactionAsync()
+    public async Task<IDbContextTransaction> BeginTransactionAsync()
     {
         IDbContextTransaction tr = await _db.Database.BeginTransactionAsync();
-        return tr.GetDbTransaction();
+        return tr;
     }
 
     public async Task CommitTransactionAsync()

@@ -30,7 +30,7 @@ public class AuthService(IUserRepository _userRepo,
         using var tr = await _uow.BeginTransactionAsync();
         await _userRepo.AddUserAsync(user);
         await _uow.SaveChangesAsync();
-        tr.Commit();
+        await _uow.CommitTransactionAsync();
         return await GenerateTokensAsync(user);
 
     }

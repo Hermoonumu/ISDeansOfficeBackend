@@ -33,7 +33,7 @@ public class ProgramService(IProgramRepository _progRepo,
             }
         );
         await _uow.SaveChangesAsync();
-        tr.Commit();
+        await _uow.CommitTransactionAsync();
     }
 
     public async Task<Guid> AssignSubjectToProgramAsync(Guid ProgramId,
@@ -58,7 +58,7 @@ public class ProgramService(IProgramRepository _progRepo,
         await _uow.SaveChangesAsync();
         await _enrSvc.UpdateStudentGradesOnNewCurriculumAsync(curriculum.Id);
         await _uow.SaveChangesAsync();
-        tr.Commit();
+        await _uow.CommitTransactionAsync();
         return curriculum.Id;
     }
 
@@ -69,7 +69,7 @@ public class ProgramService(IProgramRepository _progRepo,
         using var tr = await _uow.BeginTransactionAsync();
         program.ProgramStatus = status;
         await _uow.SaveChangesAsync();
-        tr.Commit();
+        await _uow.CommitTransactionAsync();
     }
 
     public async Task<List<EdProgram>> GetProgramsPageAsync(int page, int take)

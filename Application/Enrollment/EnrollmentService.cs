@@ -46,7 +46,7 @@ public class EnrollmentService(IProgramRepository _progRepo,
         using var tr = await _uow.BeginTransactionAsync();
         await _sgRepo.InstantiateGradesRangeAsync(sgs);
         await _uow.SaveChangesAsync();
-        tr.Commit();
+        await _uow.CommitTransactionAsync();
     }
 
     public async Task UnenrollStudentAsync(Guid StudentId)
@@ -62,7 +62,7 @@ public class EnrollmentService(IProgramRepository _progRepo,
         await _sgRepo.RemoveGradesRangeAsync(sgIds);
         user.ProgramId = null;
         await _uow.SaveChangesAsync();
-        tr.Commit();
+        await _uow.CommitTransactionAsync();
     }
 
     public async Task UpdateStudentGradesOnNewCurriculumAsync(Guid NewCurriculumId)
@@ -86,7 +86,7 @@ public class EnrollmentService(IProgramRepository _progRepo,
             using var tr = await _uow.BeginTransactionAsync();
             await _sgRepo.InstantiateGradesRangeAsync(sgs);
             await _uow.SaveChangesAsync();
-            tr.Commit();
+            await _uow.CommitTransactionAsync();
         }
         else
         {

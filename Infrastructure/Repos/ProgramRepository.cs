@@ -21,7 +21,7 @@ public class ProgramRepository(SystemDbContext _db) : IProgramRepository
 
     public async Task<List<EdProgram>> GetProgramsPageAsync(int page, int take)
     {
-        return await _db.Programs.Skip(page * 10).Take(take).ToListAsync();
+        return await _db.Programs.Skip(page * take).Take(take).ToListAsync();
     }
 
 

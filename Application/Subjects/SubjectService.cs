@@ -20,10 +20,10 @@ public class SubjectService(ISubjectRepository _subjRepo,
         {
             await _subjRepo.AddSubjectAsync(subject);
             await _uow.SaveChangesAsync();
-            tr.Commit();
+            await _uow.CommitTransactionAsync();
             return subject.Id;
         }
-        tr.Rollback();
+        await _uow.RollbackTransactionAsync();
         throw new SubjectAlreadyExistsException("This subject already exists");
     }
 
@@ -36,10 +36,10 @@ public class SubjectService(ISubjectRepository _subjRepo,
         {
             subject.SubjectName = name;
             await _uow.SaveChangesAsync();
-            tr.Commit();
+            await _uow.CommitTransactionAsync();
             return;
         }
-        tr.Rollback();
+        await _uow.RollbackTransactionAsync();
     }
 
 

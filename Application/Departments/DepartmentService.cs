@@ -24,7 +24,7 @@ public class DepartmentService(IDepartmentRepository _deptRepo,
         using var tr = await _uow.BeginTransactionAsync();
         await _deptRepo.AddDepartmentAsync(dept);
         await _uow.SaveChangesAsync();
-        tr.Commit();
+        await _uow.CommitTransactionAsync();
         return dept;
 
     }
@@ -35,13 +35,13 @@ public class DepartmentService(IDepartmentRepository _deptRepo,
         throw new DepartmentDoesntExistException("No such department");
 
         using var tr = await _uow.BeginTransactionAsync();
-        Patch.ApplyTo(user, (err) =>
+        Patch.ApplyTo(user, async (err) =>
         {
-            tr.Rollback();
+            await _uow.RollbackTransactionAsync();
             throw new UpdateFailedException($"Department update failed.\nAmended object: {err.AffectedObject.GetType()}\nError msg: {err.ErrorMessage}");
         });
         await _uow.SaveChangesAsync();
-        tr.Commit();
+        await _uow.CommitTransactionAsync();
     }
 
     public async Task RemoveDepartmentAsync(Guid guid)

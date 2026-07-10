@@ -41,13 +41,13 @@ public class UserRepository(SystemDbContext _db) : IUserRepository
 
     public async Task<List<User>> GetAllUsersPageAsync(int page, int take)
     {
-        return await _db.Users.Skip(page * 10).Take(take).ToListAsync();
+        return await _db.Users.Skip(page * take).Take(take).ToListAsync();
     }
 
     public async Task<List<User>> GetAllUsersByPositionPageAsync(Position pos, int page, int take)
     {
         return await _db.Users.Where(u => u.Position == pos)
-                                .Skip(page * 10)
+                                .Skip(page * take)
                                 .Take(take)
                                 .ToListAsync();
     }

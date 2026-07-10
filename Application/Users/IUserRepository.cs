@@ -15,4 +15,5 @@ public interface IUserRepository
     public Task PersistChangesAsync();
     public Task<List<User>> GetAllUsersPageAsync(int page, int take);
     public Task<List<User>> GetAllUsersByPositionPageAsync(Position pos, int page, int take);
+    public Task<List<User>> GetAllUsersInProgramAsync(Guid ProgId);
 }

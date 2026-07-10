@@ -1,6 +1,8 @@
 using DeanInfoSystem.Application.Common.Exceptions;
 using DeanInfoSystem.Application.Curricula;
 using DeanInfoSystem.Application.DTO;
+using DeanInfoSystem.Application.Enrollment;
+using DeanInfoSystem.Application.StudentGrades;
 using DeanInfoSystem.Domain;
 
 namespace DeanInfoSystem.Application.Programs;
@@ -10,7 +12,8 @@ namespace DeanInfoSystem.Application.Programs;
 
 public class ProgramService(IProgramRepository _progRepo,
                             IDepartmentRepository _deptRepo,
-                            ICurriculaRepository _currRepo) : IProgramService
+                            ICurriculaRepository _currRepo,
+                            IEnrollmentService _enrSvc) : IProgramService
 {
     public async Task AddProgramAsync(NewProgramDTO npDTO)
     {
@@ -46,6 +49,7 @@ public class ProgramService(IProgramRepository _progRepo,
         };
 
         await _currRepo.AddCurriculumAsync(curriculum);
+        await _enrSvc.UpdateStudentGradesOnNewCurriculumAsync(curriculum.Id);
         return curriculum.Id;
     }
 
@@ -69,8 +73,8 @@ public class ProgramService(IProgramRepository _progRepo,
         await _progRepo.RemoveProgramAsync(ProgramId);
     }
 
-    public Task RemoveSubjectFromProgramAsync(Guid CurrId)
+    public async Task RemoveCurriculumFromProgramAsync(Guid CurrId)
     {
-        throw new NotImplementedException();
+        await _currRepo.RemoveCurriculumAsync(CurrId);
     }
 }

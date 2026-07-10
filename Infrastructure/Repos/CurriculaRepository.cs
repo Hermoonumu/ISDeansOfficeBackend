@@ -31,4 +31,9 @@ public class CurriculaRepository(SystemDbContext _db) : ICurriculaRepository
                                 .Select(ec => ec.Curriculum)
                                 .ToListAsync();
     }
+
+    public async Task RemoveCurriculumAsync(Guid Id)
+    {
+        await _db.Curricula.Where(c => c.Id == Id).ExecuteDeleteAsync();
+    }
 }

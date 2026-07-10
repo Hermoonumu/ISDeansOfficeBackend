@@ -57,4 +57,9 @@ public class UserRepository(SystemDbContext _db) : IUserRepository
                                 .Take(take)
                                 .ToListAsync();
     }
+
+    public async Task<List<User>> GetAllUsersInProgramAsync(Guid ProgId)
+    {
+        return await _db.Users.Where(u => u.ProgramId == ProgId).ToListAsync();
+    }
 }

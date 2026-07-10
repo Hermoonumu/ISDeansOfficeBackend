@@ -45,4 +45,22 @@ public class EnrollmentService(IProgramRepository _progRepo,
         }
         await _sgRepo.InstantiateGradesRangeAsync(sgs);
     }
+
+    public async Task UpdateStudentGradesOnNewCurriculumAsync(Guid NewCurriculumId)
+    {
+        Curriculum curr = await _currRepo.GetCurriculumByIdAsync(NewCurriculumId);
+        List<User> students = await _userRepo.GetAllUsersInProgramAsync((Guid)curr.EdProgramId);
+
+        List<StudentGrade> sgs = [];
+        foreach (User u in students)
+        {
+            sgs.Add(new StudentGrade()
+            {
+                StudentId = u.Id,
+                Status = Status.Pending,
+                CurriculumId = NewCurriculumId,
+            });
+        }
+        await _sgRepo.InstantiateGradesRangeAsync(sgs);
+    }
 }

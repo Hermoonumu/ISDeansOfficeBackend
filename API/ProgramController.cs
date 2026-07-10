@@ -33,7 +33,7 @@ public class ProgramController(IProgramService _progSvc) : ControllerBase
 
     [Authorize(Roles = "Dean,ViceDean")]
     [HttpDelete("{ProgramId}")]
-    public async Task<IActionResult> RemoveSubject([FromRoute] Guid ProgramId)
+    public async Task<IActionResult> RemoveProgram([FromRoute] Guid ProgramId)
     {
         await _progSvc.RemoveProgramAsync(ProgramId);
         return NoContent();

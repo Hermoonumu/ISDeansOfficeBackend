@@ -18,7 +18,9 @@ public class StudentGradeMapper
             Curriculum = sg.Curriculum,
             Status = sg.Status,
             Grade = sg.Grade,
-            PassedDate = sg.PassedDate
+            PassedDate = sg.PassedDate,
+            GradedById = sg.GradedById,
+            GradedBy = UserMapper.UserToDTO(sg.GradedBy)
         };
     }
 }

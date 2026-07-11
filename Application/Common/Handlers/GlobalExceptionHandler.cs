@@ -1,3 +1,4 @@
+using System.Data;
 using DeanInfoSystem.Application.Common.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
@@ -28,6 +29,7 @@ public class GlobalExceptionHandler(IProblemDetailsService prDeService) : IExcep
             UpdateFailedException => StatusCodes.Status400BadRequest,
             UserAlreadyExistsException => StatusCodes.Status409Conflict,
             UserDoesntExistException => StatusCodes.Status404NotFound,
+            DBConcurrencyException => StatusCodes.Status409Conflict,
             _ => StatusCodes.Status500InternalServerError
         };
 
@@ -40,7 +42,7 @@ public class GlobalExceptionHandler(IProblemDetailsService prDeService) : IExcep
             {
                 Type = exception.GetType().Name,
                 Title = "An error has occurred",
-                Detail = exception.Message + "\n" + exception.StackTrace
+                Detail = exception.Message
             }
         });
 

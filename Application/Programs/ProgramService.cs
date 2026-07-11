@@ -86,7 +86,11 @@ public class ProgramService(IProgramRepository _progRepo,
 
     public async Task RemoveCurriculumFromProgramAsync(Guid CurrId)
     {
-        await _currRepo.RemoveCurriculumAsync(CurrId);
+        Curriculum? curr = await _currRepo.GetCurriculumByIdAsync(CurrId);
+        await _uow.BeginTransactionAsync();
+        curr.IsActive = false;
+        await _uow.SaveChangesAsync();
+        await _uow.CommitTransactionAsync();
     }
 
     public async Task<List<Curriculum>> GetProgramCurriculaAsync(Guid? ProgramId)

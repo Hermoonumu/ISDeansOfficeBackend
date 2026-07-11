@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DeanInfoSystem.Domain;
 
@@ -21,6 +22,9 @@ public class StudentGrade
     public int? Grade { set; get; }
     [AllowNull]
     public DateTime? PassedDate { set; get; }
+    [AllowNull]
+    public Guid? GradedById { set; get; }
+    public User? GradedBy { set; get; }
 
 }
 

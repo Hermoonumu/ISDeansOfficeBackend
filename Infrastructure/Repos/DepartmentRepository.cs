@@ -22,4 +22,5 @@ public class DepartmentRepository(SystemDbContext _db) : IDepartmentRepository
     {
         await _db.Departments.Where(d => department.Id.ToString() == d.Id.ToString()).ExecuteDeleteAsync();
     }
+
 }

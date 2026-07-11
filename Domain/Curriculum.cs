@@ -18,6 +18,7 @@ public class Curriculum
     public int LabHours { set; get; }
     public int CourseWorkHours { set; get; }
     public AssesmentType? AssessmentType { set; get; }
+    public bool IsActive { set; get; } = true;
 
 
 }

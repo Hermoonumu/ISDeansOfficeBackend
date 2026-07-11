@@ -1,4 +1,5 @@
 using System.Text;
+using DeanInfoSystem.Application.Analytics;
 using DeanInfoSystem.Application.Common.Auth;
 using DeanInfoSystem.Application.Common.Caching;
 using DeanInfoSystem.Application.Common.Handlers;
@@ -61,6 +62,7 @@ builder.Services.AddScoped<ISubjectService, SubjectService>();
 builder.Services.AddScoped<IProgramService, ProgramService>();
 builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
 builder.Services.AddScoped<IStudentGradeService, StudentGradeService>();
+builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 
 
 
@@ -72,6 +74,7 @@ builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
 builder.Services.AddScoped<ICurriculaRepository, CurriculaRepository>();
 builder.Services.AddScoped<IStudentGradeRepository, StudentGradeRepository>();
 builder.Services.AddScoped<IEducatorCurriculumRepository, EducatorCurriculumRepository>();
+builder.Services.AddScoped<IAnalyticsRepository, AnalyticsRepository>();
 
 
 //Controllers

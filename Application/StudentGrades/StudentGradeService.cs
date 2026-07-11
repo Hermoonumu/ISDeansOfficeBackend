@@ -33,6 +33,7 @@ public class StudentGradeService(IStudentGradeRepository _sgRepo,
             {
                 sgs[i].Status = Status.Passed;
                 sgs[i].PassedDate = DateTime.UtcNow;
+                sgs[i].GradedById = user.Id;
             }
             else
             {
@@ -68,7 +69,8 @@ public class StudentGradeService(IStudentGradeRepository _sgRepo,
         if (user.Position != Position.Student)
             throw new PositionException("The user is not a student to get their grade");
 
-        return await _sgRepo.GetStudentGradesAsync(StudentId);
+        var grades = await _sgRepo.GetStudentGradesAsync(StudentId);
+        return grades;
     }
 
     public async Task GradeAsync(User user, Guid cardId, uint grade)
@@ -91,6 +93,7 @@ public class StudentGradeService(IStudentGradeRepository _sgRepo,
         {
             sg.Status = Status.Passed;
             sg.PassedDate = DateTime.UtcNow;
+            sg.GradedById = user.Id;
         }
         await _uow.SaveChangesAsync();
         await _uow.CommitTransactionAsync();

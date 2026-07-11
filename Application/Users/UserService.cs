@@ -83,6 +83,8 @@ public class UserService(IUserRepository _userRepo,
     {
         User? user = await _userRepo.GetUserByGuidAsync(UserId) ??
         throw new UserDoesntExistException("No such user");
+        if (user.Position != Position.Educator)
+            throw new PositionException("The user is not an educator");
         return await _currRepo.GetCurriculaAssignedAsync(UserId);
     }
 

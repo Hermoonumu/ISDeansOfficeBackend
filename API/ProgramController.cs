@@ -51,7 +51,7 @@ public class ProgramController(IProgramService _progSvc,
         return Ok();
     }
 
-    [HttpPost("MySyllabus")]
+    [HttpGet("MySyllabus")]
     [Authorize(Roles = "Student")]
     public async Task<IActionResult> GetSyllabus()
     {

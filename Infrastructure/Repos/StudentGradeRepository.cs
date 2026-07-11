@@ -39,7 +39,7 @@ public class StudentGradeRepository(SystemDbContext _db) : IStudentGradeReposito
 
     public async Task<List<StudentGrade>> GetStudentGradesAsync(Guid StudentId)
     {
-        return await _db.Grades.Where(g => g.StudentId == StudentId).ToListAsync();
+        return await _db.Grades.AsNoTracking().Where(g => g.StudentId == StudentId).ToListAsync();
     }
 
     public async Task InstantiateGradeAsync(StudentGrade sg)

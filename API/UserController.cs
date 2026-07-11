@@ -78,7 +78,7 @@ public class UserController(IUserService _userSvc,
         return Ok();
     }
 
-    [HttpGet("{UserId}/subjects")]
+    [HttpGet("{UserId}/subjectsAssigned")]
     [Authorize]
     public async Task<IActionResult> GetAllProfCurricula([FromRoute] Guid UserId)
     {

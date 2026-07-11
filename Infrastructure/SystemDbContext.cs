@@ -67,8 +67,7 @@ public class SystemDbContext : DbContext
             .WithMany()
             .OnDelete(DeleteBehavior.SetNull);
 
-            c.HasIndex(e => e.EdProgramId)
-            .IsUnique();
+            c.HasIndex(e => e.EdProgramId);
 
             c.HasOne(e => e.Subject)
             .WithMany()

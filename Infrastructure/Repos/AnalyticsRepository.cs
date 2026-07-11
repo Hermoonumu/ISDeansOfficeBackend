@@ -10,7 +10,7 @@ public class AnalyticsRepository(SystemDbContext _db) : IAnalyticsRepository
     public async Task<List<GradeBucketsDTO>> GetProgramGradeBucketsAsync(Guid ProgramId)
     {
         return await _db.Grades
-                        .Where(g => g.Curriculum.EdProgramId == ProgramId)
+                        .Where(g => g.Curriculum.EdProgramId == ProgramId && g.Status != Domain.Status.Pending)
                         .GroupBy(s =>
                             s.Grade < 60 ? Bin.Fail :
                             s.Grade <= 63 ? Bin.Sufficient :

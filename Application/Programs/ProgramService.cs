@@ -51,7 +51,8 @@ public class ProgramService(IProgramRepository _progRepo,
             PracticeHours = astpDTO.PracticeHours,
             LabHours = astpDTO.LabHours,
             CourseWorkHours = astpDTO.CourseWorkHours,
-            AssessmentType = astpDTO.AssessmentType
+            AssessmentType = astpDTO.AssessmentType,
+            IsActive = true
         };
         using var tr = await _uow.BeginTransactionAsync();
         await _currRepo.AddCurriculumAsync(curriculum);

@@ -32,6 +32,11 @@ public class StudentGradeRepository(SystemDbContext _db) : IStudentGradeReposito
         return await _db.Grades.Where(g => g.Id == guid).FirstOrDefaultAsync();
     }
 
+    public async Task<List<StudentGrade>> GetStudentGradeByStudentIdRangeAsync(List<Guid> UserIds)
+    {
+        return await _db.Grades.Where(sg => UserIds.Contains((Guid)sg.StudentId)).ToListAsync();
+    }
+
     public async Task<List<StudentGrade>> GetStudentGradeRangeAsync(List<Guid> sgIds)
     {
         return await _db.Grades.Where(sg => sgIds.Contains(sg.Id)).ToListAsync();

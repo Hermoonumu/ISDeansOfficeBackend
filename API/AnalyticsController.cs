@@ -16,4 +16,11 @@ public class AnalyticsController(IAnalyticsService _analSvc) : ControllerBase
     {
         return Ok(await _analSvc.GetGradeDistInProgramAsync(ProgramId));
     }
+
+    [HttpGet("cohort/SholarshipRating/{ProgramId}")]
+    [Authorize(Roles = "Dean,ViceDean,Secretary")]
+    public async Task<IActionResult> GetProgramRating([FromRoute] Guid ProgramId)
+    {
+        return Ok(await _analSvc.GetStudentRankingInProgramAsync(ProgramId));
+    }
 }

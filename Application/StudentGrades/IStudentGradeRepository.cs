@@ -12,6 +12,7 @@ public interface IStudentGradeRepository
     public Task<List<StudentGrade>> GetStudentGradesAsync(Guid StudentId);
     public Task<List<StudentGrade>> GetGradesByCurriculumAsync(Guid CurrId);
     public Task<List<StudentGrade>> GetGradesByEducatorIdAsync(Guid UserId);
+    public Task<List<StudentGrade>> GetStudentGradeByStudentIdRangeAsync(List<Guid> UserIds);
     public Task RemoveGradesRangeAsync(List<Guid> sgIds);
 
 

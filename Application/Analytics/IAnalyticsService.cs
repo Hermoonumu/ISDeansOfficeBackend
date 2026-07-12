@@ -6,4 +6,5 @@ namespace DeanInfoSystem.Application.Analytics;
 public interface IAnalyticsService
 {
     public Task<GradeDistributionDTO> GetGradeDistInProgramAsync(Guid ProgramId);
+    public Task<RankingDTO> GetStudentRankingInProgramAsync(Guid ProgramId);
 }

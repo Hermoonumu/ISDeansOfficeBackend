@@ -40,6 +40,7 @@ public class SubjectService(ISubjectRepository _subjRepo,
             return;
         }
         await _uow.RollbackTransactionAsync();
+        throw new SubjectAlreadyExistsException("This subject name is taken");
     }
 
 

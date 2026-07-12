@@ -19,7 +19,8 @@ public class UserService(IUserRepository _userRepo,
     {
         using var transaction = await _uow.BeginTransactionAsync();
         await _userRepo.AddUserAsync(user);
-        transaction.Commit();
+        await _uow.SaveChangesAsync();
+        await _uow.CommitTransactionAsync();
     }
 
     public async Task AddUserAsync(NewUserDTO nuDTO)
@@ -27,7 +28,8 @@ public class UserService(IUserRepository _userRepo,
         User user = UserMapper.DTOToUser(nuDTO);
         using var transaction = await _uow.BeginTransactionAsync();
         await _userRepo.AddUserAsync(user);
-        transaction.Commit();
+        await _uow.SaveChangesAsync();
+        await _uow.CommitTransactionAsync();
     }
 
     public async Task AssignProfToCurriculumAsync(Guid UserId, Guid CurrId)

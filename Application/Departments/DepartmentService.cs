@@ -31,13 +31,12 @@ public class DepartmentService(IDepartmentRepository _deptRepo,
 
     public async Task PatchDepartmentAsync(Guid guid, JsonPatchDocument<Department> Patch)
     {
-        Department? user = await _deptRepo.GetDepartmentByGuidAsync(guid) ??
+        Department? dept = await _deptRepo.GetDepartmentByGuidAsync(guid) ??
         throw new DepartmentDoesntExistException("No such department");
 
         using var tr = await _uow.BeginTransactionAsync();
-        Patch.ApplyTo(user, async (err) =>
+        Patch.ApplyTo(dept, (err) =>
         {
-            await _uow.RollbackTransactionAsync();
             throw new UpdateFailedException($"Department update failed.\nAmended object: {err.AffectedObject.GetType()}\nError msg: {err.ErrorMessage}");
         });
         await _uow.SaveChangesAsync();

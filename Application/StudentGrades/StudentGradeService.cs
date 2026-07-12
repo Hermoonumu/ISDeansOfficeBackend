@@ -15,9 +15,8 @@ public class StudentGradeService(IStudentGradeRepository _sgRepo,
 {
     public async Task BulkGradeAsync(User user, List<BulkGradeDTO> bgDTO)
     {
+
         List<StudentGrade> sgs = await _sgRepo.GetStudentGradeRangeAsync([.. bgDTO.Select(e => e.GradeCardId)]);
-
-
         if (user.Position != Position.Dean)
         {
             if ((await _edcuRepo.IsAlreadyAssignedRangeAsync(user.Id, [.. sgs.Select(e => (Guid)e.CurriculumId)])).Any(e => e == false))
@@ -25,20 +24,29 @@ public class StudentGradeService(IStudentGradeRepository _sgRepo,
                 throw new PositionException("The user is not authorized to grade some of the curricula");
             }
         }
+        Dictionary<Guid, StudentGrade> sgsDict = [];
+        Dictionary<Guid, uint> dtoDict = [];
+        sgs.ForEach(g => sgsDict.Add(g.Id, g));
+
+        dtoDict = bgDTO
+        .GroupBy(x => x.GradeCardId)
+        .ToDictionary(g => g.Key, g => g.Last().Grade);
+
         using var tr = await _uow.BeginTransactionAsync();
-        for (int i = 0; i < sgs.Count(); i++)
+        foreach (Guid Id in sgsDict.Keys)
         {
-            sgs[i].Grade = (int)bgDTO[i].Grade;
-            if (bgDTO[i].Grade >= 60)
+            sgsDict[Id].Grade = (int)dtoDict[Id];
+            if (dtoDict[Id] >= 60)
             {
-                sgs[i].Status = Status.Passed;
-                sgs[i].PassedDate = DateTime.UtcNow;
-                sgs[i].GradedById = user.Id;
+                sgsDict[Id].Status = Status.Passed;
+                sgsDict[Id].PassedDate = DateTime.UtcNow;
             }
             else
             {
-                sgs[i].Status = Status.Failed;
+                sgsDict[Id].PassedDate = null;
+                sgsDict[Id].Status = Status.Failed;
             }
+            sgsDict[Id].GradedById = user.Id;
         }
         await _uow.SaveChangesAsync();
         await _uow.CommitTransactionAsync();

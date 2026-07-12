@@ -23,12 +23,10 @@ public class EducatorCurriculumRepository(SystemDbContext _db) : IEducatorCurric
 
     public async Task<List<Curriculum?>> GetCurriculaAssignedAsync(Guid UserId)
     {
-        return [.. (await _db.EducCurr
-                            .Include(e => e.Curriculum)
+        return await _db.EducCurr
                             .Where(u => u.UserId == UserId)
-                            .ToListAsync())
-                            .Select(e => e.Curriculum)];
-
+                            .Select(e => e.Curriculum)
+                            .ToListAsync();
     }
 
     public async Task<bool> IsAlreadyAssigned(Guid UserId, Guid CurriculumId)

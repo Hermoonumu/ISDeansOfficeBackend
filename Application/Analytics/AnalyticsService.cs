@@ -87,10 +87,7 @@ public class AnalyticsService(IAnalyticsRepository _analRepo,
         }
         reDTOList = reDTOList.OrderBy(r => r.AverageGrade).ToList();
         int ctr = 0;
-        foreach (RankingEntryDTO reDTO in reDTOList)
-        {
-            reDTO.Rank = ++ctr;
-        }
+        reDTOList.ForEach(r => r.Rank = ++ctr);
         rDTO.RankingList = reDTOList;
         return rDTO;
     }

@@ -38,14 +38,13 @@ public class StudentGradeService(IStudentGradeRepository _sgRepo,
             sgsDict[Id].Grade = (int)dtoDict[Id];
             if (dtoDict[Id] >= 60)
             {
-                sgsDict[Id].Status = Status.Passed;
-                sgsDict[Id].PassedDate = DateTime.UtcNow;
+                sgsDict[Id].GradingDate = DateTime.UtcNow;
             }
             else
             {
-                sgsDict[Id].PassedDate = null;
                 sgsDict[Id].Status = Status.Failed;
             }
+            sgsDict[Id].Status = Status.Passed;
             sgsDict[Id].GradedById = user.Id;
         }
         await _uow.SaveChangesAsync();
@@ -96,13 +95,10 @@ public class StudentGradeService(IStudentGradeRepository _sgRepo,
 
         sg.Grade = (int)grade;
         using var tr = await _uow.BeginTransactionAsync();
-        if (grade < 60) sg.Status = Status.Failed;
-        else
-        {
-            sg.Status = Status.Passed;
-            sg.PassedDate = DateTime.UtcNow;
-            sg.GradedById = user.Id;
-        }
+        sg.Status = Status.Passed;
+        sg.GradingDate = DateTime.UtcNow;
+        sg.GradedById = user.Id;
+        sg.Status = grade < 60 ? Status.Failed : Status.Passed;
         await _uow.SaveChangesAsync();
         await _uow.CommitTransactionAsync();
     }

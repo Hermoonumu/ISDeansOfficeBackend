@@ -12,5 +12,6 @@ public class UserDTO
     public required string Username { set; get; }
     public DateTime BirthDate { set; get; }
     public Position Position { set; get; }
+    public EdProgram Program { set; get; }
 
 }

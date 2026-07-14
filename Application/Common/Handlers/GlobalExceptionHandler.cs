@@ -30,6 +30,7 @@ public class GlobalExceptionHandler(IProblemDetailsService prDeService) : IExcep
             UserAlreadyExistsException => StatusCodes.Status409Conflict,
             UserDoesntExistException => StatusCodes.Status404NotFound,
             DBConcurrencyException => StatusCodes.Status409Conflict,
+            CurriculumDoesntExistException => StatusCodes.Status404NotFound,
             _ => StatusCodes.Status500InternalServerError
         };
 

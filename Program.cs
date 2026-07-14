@@ -164,6 +164,9 @@ app.UseExceptionHandler();
 
 app.UseHttpsRedirection();
 app.UseRouting();
+
+app.UseCors("AllowAngular");
+
 //API Docs
 app.MapOpenApi();
 app.MapScalarApiReference();

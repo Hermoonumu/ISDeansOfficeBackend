@@ -11,7 +11,7 @@ public class StudentGradeDTO
     public Curriculum? Curriculum { set; get; }
     public Status Status { set; get; }
     public int? Grade { set; get; }
-    public DateTime? PassedDate { set; get; }
+    public DateTime? GradingDate { set; get; }
     public Guid? GradedById { set; get; }
     public UserDTO? GradedBy { set; get; }
 

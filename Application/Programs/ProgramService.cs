@@ -5,6 +5,7 @@ using DeanInfoSystem.Application.Curricula;
 using DeanInfoSystem.Application.DTO;
 using DeanInfoSystem.Application.Enrollment;
 using DeanInfoSystem.Application.StudentGrades;
+using DeanInfoSystem.Application.Users;
 using DeanInfoSystem.Domain;
 
 namespace DeanInfoSystem.Application.Programs;
@@ -16,6 +17,7 @@ public class ProgramService(IProgramRepository _progRepo,
                             IDepartmentRepository _deptRepo,
                             ICurriculaRepository _currRepo,
                             IEnrollmentService _enrSvc,
+                            IEducatorCurriculumRepository _edcuRepo,
                             IUnitOfWork _uow) : IProgramService
 {
     public async Task AddProgramAsync(NewProgramDTO npDTO)
@@ -54,6 +56,8 @@ public class ProgramService(IProgramRepository _progRepo,
             AssessmentType = astpDTO.AssessmentType,
             IsActive = true
         };
+
+        Program.ProgramStatus = ProgramStatus.Drafted;
         using var tr = await _uow.BeginTransactionAsync();
         await _currRepo.AddCurriculumAsync(curriculum);
         await _uow.SaveChangesAsync();
@@ -94,9 +98,24 @@ public class ProgramService(IProgramRepository _progRepo,
         await _uow.CommitTransactionAsync();
     }
 
+
+
     public async Task<List<Curriculum>> GetProgramCurriculaAsync(Guid? ProgramId)
     {
         if (ProgramId is null) throw new PositionException("The student isn't enrolled in any program");
         return await _currRepo.GetAllCurriculaByProgramAsync((Guid)ProgramId);
+    }
+
+    public async Task RemoveSubjectFromProgramAsync(Guid SubjId, Guid ProgramId)
+    {
+        Curriculum? curr = await _currRepo.GetCurriculumBySubjectProgramAsync(SubjId, ProgramId)
+        ?? throw new CurriculumDoesntExistException("No such curriculum");
+
+        await _currRepo.RemoveCurriculumAsync(curr.Id);
+    }
+
+    public async Task<List<Curriculum?>> GetEducatorAssignedCurricula(Guid UserId)
+    {
+        return await _edcuRepo.GetCurriculaAssignedAsync(UserId);
     }
 }

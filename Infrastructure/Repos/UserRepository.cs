@@ -14,7 +14,10 @@ public class UserRepository(SystemDbContext _db) : IUserRepository
 
     public async Task<User?> GetUserByGuidAsync(Guid guid)
     {
-        return await _db.Users.Where(u => u.Id == guid).FirstOrDefaultAsync();
+        return await _db.Users.Include(u => u.Program)
+                                .ThenInclude(p => p.Department)
+                                .Where(u => u.Id == guid)
+                                .FirstOrDefaultAsync();
     }
 
     public async Task<User?> GetUserByUsernameAsync(string username)

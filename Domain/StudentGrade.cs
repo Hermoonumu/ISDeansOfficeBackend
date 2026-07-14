@@ -21,7 +21,7 @@ public class StudentGrade
     public required Status Status { set; get; } = Status.Pending;
     public int? Grade { set; get; }
     [AllowNull]
-    public DateTime? PassedDate { set; get; }
+    public DateTime? GradingDate { set; get; }
     [AllowNull]
     public Guid? GradedById { set; get; }
     public User? GradedBy { set; get; }

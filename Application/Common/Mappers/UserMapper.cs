@@ -28,7 +28,8 @@ public static class UserMapper
             LastName = user.LastName,
             Username = user.Username,
             BirthDate = user.BirthDate,
-            Position = user.Position
+            Position = user.Position,
+            Program = user.Program
         };
     }
 }

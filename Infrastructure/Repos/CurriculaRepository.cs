@@ -35,4 +35,10 @@ public class CurriculaRepository(SystemDbContext _db) : ICurriculaRepository
     {
         await _db.Curricula.Where(c => c.Id == Id).ExecuteDeleteAsync();
     }
+
+    public async Task<Curriculum?> GetCurriculumBySubjectProgramAsync(Guid SubjId, Guid ProgramId)
+    {
+        return await _db.Curricula.Where(c => c.EdProgramId == ProgramId && c.SubjectId == SubjId)
+                                    .FirstOrDefaultAsync();
+    }
 }

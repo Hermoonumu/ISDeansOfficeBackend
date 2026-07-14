@@ -3,6 +3,7 @@
 namespace DeanInfoSystem.API;
 
 using DeanInfoSystem.Application.Common.Auth;
+using DeanInfoSystem.Application.Common.Mappers;
 using DeanInfoSystem.Application.DTO;
 using DeanInfoSystem.Domain;
 using Microsoft.AspNetCore.Authorization;
@@ -20,7 +21,8 @@ public class AuthController(IAuthService _authSvc,
         Dictionary<string, string> tokens;
         tokens = await _authSvc.LoginAsync(lfDTO);
         await ComposeCookies(HttpContext, tokens);
-        return Ok();
+        User user = await _authSvc.AuthenticateUserAsync(tokens["AccessToken"]);
+        return Ok(UserMapper.UserToDTO(user));
     }
 
     [Authorize]
@@ -32,12 +34,7 @@ public class AuthController(IAuthService _authSvc,
 
         if (user is null) return Unauthorized();
 
-        return Ok(new
-        {
-            id = user.Id,
-            username = user.Username,
-            position = user.Position
-        });
+        return Ok(UserMapper.UserToDTO(user));
     }
 
     [HttpPost("refresh")]

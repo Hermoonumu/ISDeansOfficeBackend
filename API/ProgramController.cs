@@ -5,6 +5,7 @@ using DeanInfoSystem.Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
+using StackExchange.Redis;
 
 namespace DeanInfoSystem.API;
 
@@ -23,7 +24,7 @@ public class ProgramController(IProgramService _progSvc,
         return Created();
     }
 
-    [Authorize(Roles = "EducationalAdvisor,Educator,ViceDean,Dean")]
+    [Authorize(Roles = "EducationalAdvisor,ViceDean,Dean")]
     [HttpPost("{ProgId}")]
     public async Task<IActionResult> AssignSubjectToProgram([FromRoute] Guid ProgId,
                                                             [FromBody] AddSubjectToProgramDTO astpDTO)
@@ -31,6 +32,15 @@ public class ProgramController(IProgramService _progSvc,
         Guid guid;
         guid = await _progSvc.AssignSubjectToProgramAsync(ProgId, astpDTO);
         return StatusCode(201, new { Id = guid.ToString() });
+    }
+
+    [Authorize(Roles = "EducationalAdvisor,ViceDean,Dean")]
+    [HttpDelete("{ProgId}/subject/{SubjectId}")]
+    public async Task<IActionResult> DismissSubjectFromProgram([FromRoute] Guid ProgId,
+                                                            [FromRoute] Guid SubjectId)
+    {
+        await _progSvc.RemoveSubjectFromProgramAsync(SubjectId, ProgId);
+        return Ok();
     }
 
     [Authorize(Roles = "Dean,ViceDean")]
@@ -53,10 +63,25 @@ public class ProgramController(IProgramService _progSvc,
 
     [HttpGet("MySyllabus")]
     [Authorize(Roles = "Student")]
-    public async Task<IActionResult> GetSyllabus()
+    public async Task<IActionResult> GetOwnSyllabus()
     {
         User user = await _authSvc.AuthenticateUserAsync(HttpContext.Request.Cookies["AccessToken"]!);
         return Ok(await _progSvc.GetProgramCurriculaAsync(user.ProgramId));
+    }
+
+    [HttpGet("{ProgramId}/ProgramSyllabus")]
+    [Authorize]
+    public async Task<IActionResult> GetSyllabusAll([FromRoute] Guid ProgramId)
+    {
+        return Ok(await _progSvc.GetProgramCurriculaAsync(ProgramId));
+    }
+
+    [HttpGet("EducatorSyllabus")]
+    [Authorize(Roles = "Educator")]
+    public async Task<IActionResult> EducatorSyllabus()
+    {
+        User user = await _authSvc.AuthenticateUserAsync(HttpContext.Request.Cookies["AccessToken"]!);
+        return Ok(await _progSvc.GetProgramCurriculaAsync(user.Id));
     }
 
 

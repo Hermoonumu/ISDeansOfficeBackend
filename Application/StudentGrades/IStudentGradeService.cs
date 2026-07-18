@@ -11,4 +11,8 @@ public interface IStudentGradeService
     public Task<List<StudentGrade>> GetStudentGradesAsync(Guid StudentId);
     public Task<List<StudentGrade>> GetGradesByCurriculumAsync(User user, Guid CurrId);
     public Task<List<StudentGrade>> GetGradesByEducatorIdAsync(Guid UserId);
+    public Task<List<StudentGradeDTO>> GetStudentRecentGradesAsync(Guid userId, int amount);
+    public Task<List<StudentGradeDTO>> GetStudentGradesDTOAsync(Guid StudentId);
+    public Task<List<UngradedStudentsDTO>> GetUngradedStudentsAsync(Guid EducatorId);
+    public Task ConfirmFailingGrade(Guid GradeId);
 }

@@ -51,6 +51,20 @@ public class StudentGradeService(IStudentGradeRepository _sgRepo,
         await _uow.CommitTransactionAsync();
     }
 
+    public async Task ConfirmFailingGrade(Guid GradeId)
+    {
+        StudentGrade? grade = await _sgRepo.GetStudentGradeByGuidAsync(GradeId)
+        ?? throw new GradeDoesntExistException("No such grade");
+
+        if (grade.Status != Status.Failed)
+            throw new PositionException("This grade is not failing for it to be deemed failed");
+
+        using var tr = await _uow.BeginTransactionAsync();
+        grade.ConfirmFailure = true;
+        await _uow.SaveChangesAsync();
+        await _uow.CommitTransactionAsync();
+    }
+
     public async Task<List<StudentGrade>> GetGradesByCurriculumAsync(User user, Guid CurrId)
     {
         if (user.Position != Position.Dean)
@@ -78,6 +92,34 @@ public class StudentGradeService(IStudentGradeRepository _sgRepo,
 
         var grades = await _sgRepo.GetStudentGradesAsync(StudentId);
         return grades;
+    }
+
+    public async Task<List<StudentGradeDTO>> GetStudentGradesDTOAsync(Guid StudentId)
+    {
+        User? user = await _usrSvc.GetUserByGuidAsync(StudentId) ??
+        throw new UserDoesntExistException("No such user");
+
+        if (user.Position != Position.Student)
+            throw new PositionException("The user is not a student to get their grade");
+
+        var grades = await _sgRepo.GetStudentGradesDTOAsync(StudentId);
+        return grades;
+    }
+
+    public async Task<List<StudentGradeDTO>> GetStudentRecentGradesAsync(Guid userId, int amount)
+    {
+        User? user = await _usrSvc.GetUserByGuidAsync(userId) ??
+        throw new UserDoesntExistException("No such user");
+
+        if (user.Position != Position.Student)
+            throw new PositionException("The user is not a student to get their grade");
+
+        return await _sgRepo.GetStudentRecentGradesAsync(userId, amount);
+    }
+
+    public async Task<List<UngradedStudentsDTO>> GetUngradedStudentsAsync(Guid EducatorId)
+    {
+        return await _sgRepo.GetUngradedStudentsAsync(EducatorId);
     }
 
     public async Task GradeAsync(User user, Guid cardId, uint grade)

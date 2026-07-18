@@ -10,6 +10,7 @@ public interface IUserService
     public Task AddUserAsync(User user);
     public Task AddUserAsync(NewUserDTO nuDTO);
     public Task<User?> GetUserByGuidAsync(Guid UserId);
+    public Task<List<UserDTO>> GetAllUsersAsync();
     public Task PatchUserAsync(Guid guid, JsonPatchDocument<UserUpdateDTO> Patch);
     public Task RemoveUserAsync(Guid guid);
     public Task AssignProfToCurriculumAsync(Guid UserId, Guid CurrId);

@@ -14,6 +14,11 @@ public class ProgramRepository(SystemDbContext _db) : IProgramRepository
         await _db.Programs.AddAsync(program);
     }
 
+    public async Task<List<EdProgram>> GetAllProgramsAsync()
+    {
+        return await _db.Programs.Include(p => p.Department).ToListAsync();
+    }
+
     public async Task<EdProgram?> GetProgramByGuidAsync(Guid guid)
     {
         return await _db.Programs.Where(p => p.Id == guid).FirstOrDefaultAsync();

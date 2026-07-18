@@ -1,4 +1,4 @@
-namespace DeanInfoSystem.API.DTO;
+namespace DeanInfoSystem.Application.DTO;
 
 
 

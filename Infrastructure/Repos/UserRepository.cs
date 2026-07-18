@@ -1,3 +1,4 @@
+using DeanInfoSystem.Application.DTO;
 using DeanInfoSystem.Application.Users;
 using DeanInfoSystem.Domain;
 using Microsoft.EntityFrameworkCore;
@@ -58,5 +59,19 @@ public class UserRepository(SystemDbContext _db) : IUserRepository
     public async Task<List<User>> GetAllUsersInProgramAsync(Guid ProgId)
     {
         return await _db.Users.Where(u => u.ProgramId == ProgId).ToListAsync();
+    }
+
+    public async Task<List<UserDTO>> GetAllUsersAsync()
+    {
+        return await _db.Users.Select(u => new UserDTO()
+        {
+            Id = u.Id,
+            FirstName = u.FirstName,
+            LastName = u.LastName,
+            Username = u.Username,
+            BirthDate = u.BirthDate,
+            Position = u.Position,
+            Program = u.Program
+        }).ToListAsync();
     }
 }

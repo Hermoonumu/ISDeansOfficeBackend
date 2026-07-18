@@ -13,4 +13,5 @@ public interface ICurriculaRepository
     public Task<Curriculum?> GetCurriculumBySubjectProgramAsync(Guid SubjId, Guid ProgramId);
     public Task<List<Curriculum>> GetCurriculaAssignedAsync(Guid UserId);
     public Task RemoveCurriculumAsync(Guid Id);
+    public Task<List<Curriculum>> GetAllCurriculaAsync();
 }

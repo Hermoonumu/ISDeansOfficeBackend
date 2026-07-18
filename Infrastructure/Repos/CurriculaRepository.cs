@@ -15,7 +15,7 @@ public class CurriculaRepository(SystemDbContext _db) : ICurriculaRepository
 
     public async Task<List<Curriculum>> GetAllCurriculaByProgramAsync(Guid programId)
     {
-        return await _db.Curricula.Where(c => c.EdProgramId == programId).ToListAsync();
+        return await _db.Curricula.Include(c => c.Subject).Where(c => c.EdProgramId == programId).ToListAsync();
     }
 
     public async Task<Curriculum?> GetCurriculumByIdAsync(Guid CurriculumId)
@@ -40,5 +40,10 @@ public class CurriculaRepository(SystemDbContext _db) : ICurriculaRepository
     {
         return await _db.Curricula.Where(c => c.EdProgramId == ProgramId && c.SubjectId == SubjId)
                                     .FirstOrDefaultAsync();
+    }
+
+    public async Task<List<Curriculum>> GetAllCurriculaAsync()
+    {
+        return await _db.Curricula.Include(c => c.Subject).ToListAsync();
     }
 }

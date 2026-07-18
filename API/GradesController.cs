@@ -38,7 +38,8 @@ public class GradesController(IStudentGradeService _sgSvc,
     [Authorize(Roles = "Dean,ViceDean,Educator,Secretary")]
     public async Task<IActionResult> GetStudentGrades([FromRoute] Guid StudentId)
     {
-        return Ok((await _sgSvc.GetStudentGradesAsync(StudentId)).Select(StudentGradeMapper.SGToDTO));
+        var list = (await _sgSvc.GetStudentGradesAsync(StudentId)).Select(StudentGradeMapper.SGToDTO).ToList();
+        return Ok(list);
     }
 
     [HttpGet("MyGrades")]
@@ -46,7 +47,15 @@ public class GradesController(IStudentGradeService _sgSvc,
     public async Task<IActionResult> GetOwnGrades()
     {
         User user = await _authSvc.AuthenticateUserAsync(HttpContext.Request.Cookies["AccessToken"]!);
-        return Ok(await _sgSvc.GetStudentGradesAsync(user.Id));
+        return Ok(await _sgSvc.GetStudentGradesDTOAsync(user.Id));
+    }
+
+    [HttpGet("MyRecentGrades")]
+    [Authorize(Roles = "Student")]
+    public async Task<IActionResult> GetOwnRecentGrades([FromQuery] int amount = 10)
+    {
+        User user = await _authSvc.AuthenticateUserAsync(HttpContext.Request.Cookies["AccessToken"]!);
+        return Ok(await _sgSvc.GetStudentRecentGradesAsync(user.Id, amount));
     }
 
     [HttpGet("curriculum/{CurrId}")]
@@ -64,5 +73,21 @@ public class GradesController(IStudentGradeService _sgSvc,
         User user = await _authSvc.AuthenticateUserAsync(HttpContext.Request.Cookies["AccessToken"]!);
         return Ok(await _sgSvc.GetGradesByEducatorIdAsync(user.Id));
 
+    }
+
+    [HttpGet("MyUngradedStudents")]
+    [Authorize(Roles = "Educator")]
+    public async Task<IActionResult> GetUngradedStudents()
+    {
+        User user = await _authSvc.AuthenticateUserAsync(HttpContext.Request.Cookies["AccessToken"]!);
+        return Ok(await _sgSvc.GetUngradedStudentsAsync(user.Id));
+    }
+
+    [HttpPost("ConfirmGradeFailure/{GradeId}")]
+    [Authorize(Roles = "Educator")]
+    public async Task<IActionResult> ConfirmGradeFail([FromRoute] Guid GradeId)
+    {
+        await _sgSvc.ConfirmFailingGrade(GradeId);
+        return Ok();
     }
 }

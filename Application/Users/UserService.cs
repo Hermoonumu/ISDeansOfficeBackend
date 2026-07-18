@@ -69,6 +69,11 @@ public class UserService(IUserRepository _userRepo,
 
     }
 
+    public async Task<List<UserDTO>> GetAllUsersAsync()
+    {
+        return await _userRepo.GetAllUsersAsync();
+    }
+
     public async Task<List<UserDTO>> GetAllUsersByPositionPageAsync(Position pos, int page, int take)
     {
         List<User> users = await _userRepo.GetAllUsersByPositionPageAsync(pos, page, take);

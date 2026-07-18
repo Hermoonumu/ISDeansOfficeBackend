@@ -25,7 +25,20 @@ public class EducatorCurriculumRepository(SystemDbContext _db) : IEducatorCurric
     {
         return await _db.EducCurr
                             .Where(u => u.UserId == UserId)
-                            .Select(e => e.Curriculum)
+                            .Select(e => new Curriculum()
+                            {
+                                Id = e.Curriculum.Id,
+                                SubjectId = e.Curriculum.SubjectId,
+                                Subject = e.Curriculum.Subject,
+                                EdProgramId = e.Curriculum.EdProgramId,
+                                EdProgram = e.Curriculum.EdProgram,
+                                Semester = e.Curriculum.Semester,
+                                LectureHours = e.Curriculum.LectureHours,
+                                PracticeHours = e.Curriculum.PracticeHours,
+                                LabHours = e.Curriculum.LabHours,
+                                CourseWorkHours = e.Curriculum.CourseWorkHours,
+                                AssessmentType = e.Curriculum.AssessmentType
+                            })
                             .ToListAsync();
     }
 

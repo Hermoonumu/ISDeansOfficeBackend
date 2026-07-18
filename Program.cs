@@ -160,7 +160,7 @@ builder.Services.AddAuthorizationBuilder()
 
 var app = builder.Build();
 
-app.UseExceptionHandler();
+//app.UseExceptionHandler();
 
 app.UseHttpsRedirection();
 app.UseRouting();

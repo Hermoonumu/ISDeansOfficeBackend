@@ -19,6 +19,7 @@ public class StudentGrade
     public Curriculum? Curriculum { set; get; }
     [Required]
     public required Status Status { set; get; } = Status.Pending;
+    public bool ConfirmFailure { set; get; }
     public int? Grade { set; get; }
     [AllowNull]
     public DateTime? GradingDate { set; get; }

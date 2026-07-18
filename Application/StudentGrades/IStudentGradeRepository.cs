@@ -1,3 +1,4 @@
+using DeanInfoSystem.Application.DTO;
 using DeanInfoSystem.Domain;
 
 namespace DeanInfoSystem.Application.StudentGrades;
@@ -14,7 +15,9 @@ public interface IStudentGradeRepository
     public Task<List<StudentGrade>> GetGradesByEducatorIdAsync(Guid UserId);
     public Task<List<StudentGrade>> GetStudentGradeByStudentIdRangeAsync(List<Guid> UserIds);
     public Task RemoveGradesRangeAsync(List<Guid> sgIds);
-    public Task<List<StudentGrade>> GetStudentRecentGradesAsync(Guid userId, int amount);
+    public Task<List<StudentGradeDTO>> GetStudentRecentGradesAsync(Guid userId, int amount);
+    public Task<List<StudentGradeDTO>> GetStudentGradesDTOAsync(Guid StudentId);
+    public Task<List<UngradedStudentsDTO>> GetUngradedStudentsAsync(Guid EducatorId);
 
 
 }

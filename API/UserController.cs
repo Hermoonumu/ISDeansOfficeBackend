@@ -103,6 +103,13 @@ public class UserController(IUserService _userSvc,
         return Ok(await _userSvc.GetAllUsersPageAsync(page, take));
     }
 
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> GetAllUsers()
+    {
+        return Ok(await _userSvc.GetAllUsersAsync());
+    }
+
     [HttpGet("position/{Position}")]
     [Authorize]
     public async Task<IActionResult> GetAllUsersByPositionPage([FromRoute] Position Position,

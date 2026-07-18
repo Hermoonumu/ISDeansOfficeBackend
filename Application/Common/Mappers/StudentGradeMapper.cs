@@ -13,14 +13,14 @@ public class StudentGradeMapper
         {
             Id = sg.Id,
             StudentId = sg.StudentId,
-            Student = UserMapper.UserToDTO(sg.Student),
+            Student = sg.Student is not null ? UserMapper.UserToDTO(sg.Student) : null,
             CurriculumId = sg.CurriculumId,
-            Curriculum = sg.Curriculum,
+            SubjectName = sg.Curriculum.Subject.SubjectName,
             Status = sg.Status,
             Grade = sg.Grade,
             GradingDate = sg.GradingDate,
             GradedById = sg.GradedById,
-            GradedBy = UserMapper.UserToDTO(sg.GradedBy)
+            GradedBy = sg.GradedBy is not null ? UserMapper.UserToDTO(sg.GradedBy) : null
         };
     }
 }

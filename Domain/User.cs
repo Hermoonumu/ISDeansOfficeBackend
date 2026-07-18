@@ -21,7 +21,6 @@ public class User
     public DateTime BirthDate { set; get; }
     [Required]
     public Position Position { set; get; }
-
     public Guid? ProgramId { set; get; }
     public EdProgram? Program { set; get; }
 

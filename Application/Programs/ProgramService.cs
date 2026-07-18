@@ -1,12 +1,11 @@
-using System.Transactions;
 using DeanInfoSystem.Application.Common.Exceptions;
 using DeanInfoSystem.Application.Common.UoW;
 using DeanInfoSystem.Application.Curricula;
 using DeanInfoSystem.Application.DTO;
 using DeanInfoSystem.Application.Enrollment;
-using DeanInfoSystem.Application.StudentGrades;
 using DeanInfoSystem.Application.Users;
 using DeanInfoSystem.Domain;
+using Microsoft.AspNetCore.JsonPatch.SystemTextJson;
 
 namespace DeanInfoSystem.Application.Programs;
 
@@ -100,7 +99,8 @@ public class ProgramService(IProgramRepository _progRepo,
 
 
 
-    public async Task<List<Curriculum>> GetProgramCurriculaAsync(Guid? ProgramId)
+    public async Task<List<Curriculum>> GetProgramCurriculaAsync(Guid? ProgramId,
+                                        Semester semester = Semester.FirstYearFirstSemester)
     {
         if (ProgramId is null) throw new PositionException("The student isn't enrolled in any program");
         return await _currRepo.GetAllCurriculaByProgramAsync((Guid)ProgramId);
@@ -117,5 +117,40 @@ public class ProgramService(IProgramRepository _progRepo,
     public async Task<List<Curriculum?>> GetEducatorAssignedCurricula(Guid UserId)
     {
         return await _edcuRepo.GetCurriculaAssignedAsync(UserId);
+    }
+
+    public async Task PatchProgramAsync(Guid ProgramId, JsonPatchDocument<ProgramPatchDTO> ppDTO)
+    {
+        EdProgram program = await _progRepo.GetProgramByGuidAsync(ProgramId)
+        ?? throw new ProgramDoesntExistException("No such program");
+
+        ProgramPatchDTO aplTo = new()
+        {
+            ProgramName = program.ProgramName,
+            ProgramCode = program.ProgramCode,
+            ProgramStatus = program.ProgramStatus,
+            DepartmentId = program.DepartmentId
+        };
+        ppDTO.ApplyTo(aplTo, err =>
+        {
+            throw new UpdateFailedException("We could not complete the operation");
+        });
+        await _uow.BeginTransactionAsync();
+        program.ProgramName = aplTo.ProgramName;
+        program.ProgramCode = aplTo.ProgramCode;
+        program.ProgramStatus = aplTo.ProgramStatus;
+        program.DepartmentId = aplTo.DepartmentId;
+        await _uow.SaveChangesAsync();
+        await _uow.CommitTransactionAsync();
+    }
+
+    public async Task<List<EdProgram>> GetAllProgramsAsync()
+    {
+        return await _progRepo.GetAllProgramsAsync();
+    }
+
+    public async Task<List<Curriculum>> GetAllCurriculaAsync()
+    {
+        return await _currRepo.GetAllCurriculaAsync();
     }
 }

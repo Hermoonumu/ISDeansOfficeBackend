@@ -1,5 +1,5 @@
-using DeanInfoSystem.API.DTO;
 using DeanInfoSystem.Application.Common.Exceptions;
+using DeanInfoSystem.Application.DTO;
 using DeanInfoSystem.Application.DTO;
 using DeanInfoSystem.Application.Subjects;
 using Microsoft.AspNetCore.Authorization;
